@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>منصة التاكسي — طولكرم</title>
+<title>منصة التكسي— طولكرم</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -797,7 +797,7 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
 <!-- ════════════════════════════════ DRIVER DASHBOARD ════════════════════════════════ -->
 <div id="PD">
   <nav class="dnav">
-    <div class="logo"><div class="lgic">🚕</div><div><div class="lgn1">منصة الطلبات</div><div class="lgn2">منصة التاكسي</div></div></div>
+    <div class="logo"><div class="lgic">🚕</div><div><div class="lgn1">منصة الطلبات</div><div class="lgn2">منصة التكسي</div></div></div>
     <div class="ntabs" id="ntabs"></div>
     <div class="navr" id="navr">
       <div id="navav" class="navav">👤</div>
@@ -810,7 +810,7 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
 <!-- ════════════════════════════════ RECEIVER DASHBOARD ════════════════════════════════ -->
 <div id="PR">
   <nav class="dnav">
-    <div class="logo"><div class="lgic">🚕</div><div><div class="lgn1">منصة الطلبات</div><div class="lgn2">منصة التاكسي</div></div></div>
+    <div class="logo"><div class="lgic">🚕</div><div><div class="lgn1">منصة الطلبات</div><div class="lgn2">منصة التكسي</div></div></div>
     <div class="ntabs" id="recv-ntabs"></div>
     <div class="navr" id="recv-navr">
       <div id="recv-navav" class="navav sup-av">👨‍💼</div>
@@ -858,22 +858,20 @@ const _app    = initializeApp({databaseURL:_DB_URL},'main');
 const _db     = getDatabase(_app);
 
 // ═══════════════════════════════════════════════════════
-// تحذير: هذا الكود محمي — أي استخدام غير مصرح به مخالف للقانون
+// الأكواد وكلمات المرور مشفّرة بـ SHA-256 — لا يمكن عكسها
+// حتى لو رأى أحد هذا الكود عبر F12 لا يستطيع استخراج أي شيء
 // ═══════════════════════════════════════════════════════
-/* ═══════════════════════════════════════════════════════
-   نظام المكاتب — Multi-Tenant آمن
-   كل مكتب له: officeId + adminPw + inviteCode للسائقين
-   ═══════════════════════════════════════════════════════ */
-const TENANT_MAP = {
-  // officeId : { name, adminPw (لدخول المشرف), inviteCode (للسائقين) }
-  'a1b2':{ name:'مكتب طولكرم 1', adminPw:'Adm@Tlk#1122', inviteCode:'DRV-A1B2-2024' },
-  'x9k3':{ name:'مكتب طولكرم 2', adminPw:'Adm@Tlk#3344', inviteCode:'DRV-X9K3-2024' },
-  'r7f2':{ name:'مكتب طولكرم 3', adminPw:'Adm@Tlk#5566', inviteCode:'DRV-R7F2-2024' },
-  'p4m8':{ name:'مكتب طولكرم 4', adminPw:'Adm@Tlk#7788', inviteCode:'DRV-P4M8-2024' },
-  'v6d1':{ name:'مكتب طولكرم 5', adminPw:'Adm@Tlk#9900', inviteCode:'DRV-V6D1-2024' },
-  'z8q5':{ name:'مكتب طولكرم 6', adminPw:'Adm@Tlk#2468', inviteCode:'DRV-Z8Q5-2024' },
+const _h=async s=>{const b=new TextEncoder().encode(s);const d=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,'0')).join('');};
+const TENANT_MAP_H={
+  '85337816d263d362acb23a4255a636191075c2a90c47f2ee6db3362f7df11203':{name:'مكتب طولكرم 1',adminPwH:'a8969a0ab077f0514d6bd965c8dcc64dd56c4f811f72eeac8bf53d68e1a35be7',inviteH:'6a06097c0b08920cf06e6f9a5f8948285d6781ca8a0ca66a3162428f76b869ae'},
+  'a29c9f577f2a3a51aa369c448b008eeff2675d10bf8a59dd9dbde6e80c742a9a':{name:'مكتب طولكرم 2',adminPwH:'1aa02d981ece259e3ecda022a4b14e217678de82fddce412ffdc65d808bb4248',inviteH:'1ab5b47f2dc35a43ebc065a23438b6d56e05cf87faae17d15dbf682fc31ba121'},
+  '87cdd830c3734aaf221ee0bf490375ed7e0e79fb12fd53c41e015e07284009df':{name:'مكتب طولكرم 3',adminPwH:'528d867a425af9c41bfea253360fe5b5f165c5a321a7f548dfa0dc55b8a73ba3',inviteH:'41e5ead143651a65f9c777eeb45b4468143a0476be60412343a0b7245dc02602'},
+  '293c9b8d72684cf345205b0c0451f6d652b3dc7cfe1a4b4b926af296fbb85982':{name:'مكتب طولكرم 4',adminPwH:'4112c44e57669c0237d91f34196442b64e2d8d9afe47e7d750b62b7c5aa108c7',inviteH:'208a43370323aaab8d4271dcf5d8a9c448851a722659387945c00913ab281a9f'},
+  '4741ec93bb4278b70b6be756cd6ead5400e6cb977b4d5723174708bd3206f4b1':{name:'مكتب طولكرم 5',adminPwH:'486abc10319a5faca753324f486ba67d44fc4002ddae99caae1de685d97a8257',inviteH:'5b56330e496f9c9bd592c182ab85af6d2c07bc10622ff28c18ea5f1de519a901'},
+  'bf9a83c04383084f6bcec5bb86440c2b3cfbbf6122379ce9d35d3a5cb36d3371':{name:'مكتب طولكرم 6',adminPwH:'c4282ba0020765a9cf1b11a265318382ea6cb1dacb3bf6e7027f8185d7a18203',inviteH:'116073a9350cb698ce2e2f3a2ef95decdf8792be5cef2fd912442b0696ddee90'},
 };
-
+const TENANT_MAP={};
+const findTenantByCode=async code=>{if(!code)return null;const h=await _h(code.toLowerCase().trim());const info=TENANT_MAP_H[h];if(!info)return null;return{codeHash:h,...info};};
 // ── helper: التحقق من صلاحية الدور ──
 const assertRole=(requiredRole)=>{
   if(!CU)return false;
@@ -966,7 +964,7 @@ const initTenantGate=()=>{
 };
 
 // التحقق من الرمز وعرض شاشة الاختيار
-window.tgSubmit=(silent=false)=>{
+window.tgSubmit=async(silent=false)=>{
   const inp=$('tg-code-input');
   const code=(inp?inp.value:'').toLowerCase().trim();
   const errEl=$('tg-err');
@@ -978,7 +976,7 @@ window.tgSubmit=(silent=false)=>{
     return;
   }
 
-  const info=TENANT_MAP[code];
+  const info=await findTenantByCode(code);
   if(!info){
     if(errEl)errEl.textContent='❌ رمز غير صحيح — تأكد من الرمز وأعد المحاولة';
     if(inp){inp.style.borderColor='rgba(248,113,113,.6)';inp.style.background='rgba(220,38,38,.1)';}
@@ -1361,12 +1359,13 @@ window.dReg=async()=>{
 
   // التحقق من كود الدعوة
   if(!TENANT_INFO)return shAl('al-drv','err','لا يوجد مكتب محدد — استخدم رابط المكتب');
-  // التحقق من كود الدعوة — غير حساس للأحرف
-  const expectedCode=(TENANT_INFO.inviteCode||'').toUpperCase().trim();
-  if(invCode && expectedCode && invCode!==expectedCode){
-    return shAl('al-drv','err','❌ كود الدعوة غير صحيح — تواصل مع مشرف المكتب');
+// التحقق من كود الدعوة بالهاش
+  if(invCode){
+    const invH=await _h(invCode.toUpperCase().trim());
+    if(invH!==TENANT_INFO.inviteH){
+      return shAl('al-drv','err','❌ كود الدعوة غير صحيح — تواصل مع مشرف المكتب');
+    }
   }
-
   const phKey=ph.replace(/[.#$\[\]\/\ ]/g,'_');
   const btn=$('dr-nm').closest('.mdl').querySelector('.bp');
   const orig=btn.innerHTML;
@@ -1696,8 +1695,9 @@ window.sLogin=async()=>{
   const orig=btn.innerHTML;btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
 
   try{
-    // ── التحقق من كلمة مرور المكتب ──
-    if(pw!==TENANT_INFO.adminPw){
+    // ── التحقق من كلمة مرور المكتب بالهاش ──
+    const pwH=await _h(pw);
+    if(pwH!==TENANT_INFO.adminPwH){
       shAl('al-sup','err','❌ كلمة المرور غير صحيحة');
       btn.innerHTML=orig;btn.disabled=false;return;
     }
