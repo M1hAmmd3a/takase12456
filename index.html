@@ -385,30 +385,61 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
 .gps-mid{background:var(--amber-l);color:var(--amber);border:1px solid var(--amber-m)}
 
 @media(max-width:640px){
-  .dlayout,.sup-req-layout{flex-direction:column;height:auto;min-height:calc(100vh - 60px)}
-  .dside{width:100%;flex:0 0 auto;max-height:35vh;border-left:none;border-bottom:1px solid var(--border);overflow-y:auto}
-  .sup-req-col{width:100%;max-height:none;border-left:none;border-bottom:1px solid var(--border);margin-bottom:10px}
-  .col-scroll{max-height:35vh;overflow-y:auto}
-  .sup-req-main{min-height:auto}
-  .ststrip{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:6px;padding:8px 12px}
-  .st{flex-shrink:0;padding:6px 10px}
-  .stv{font-size:14px}
+  /* تخطيط عام */
+  .dlayout,.sup-req-layout{flex-direction:column;height:auto;min-height:calc(100vh - 60px - 70px)}
+  .dside{width:100%;flex:0 0 auto;max-height:none;border-left:none;border-bottom:1px solid var(--border);overflow-y:auto}
+  
+  /* تخطيط المشرف — كل شيء في عمود واحد قابل للتمرير */
+  .sup-req-layout{display:flex;flex-direction:column;overflow-y:auto;height:calc(100vh - 60px - 70px)}
+  .sup-req-col{width:100%;flex-shrink:0;border-left:none;border-bottom:1px solid var(--border)}
+  .col-scroll{max-height:320px;overflow-y:auto}
+  .sup-req-main{flex:1;overflow:visible;min-height:0}
+  .sup-req-main > .ststrip{position:sticky;top:0;z-index:10;background:var(--bg)}
+  
+  /* الشريط الإحصائي */
+  .ststrip{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:5px;padding:6px 10px;scrollbar-width:none}
+  .ststrip::-webkit-scrollbar{display:none}
+  .st{flex-shrink:0;padding:6px 9px;gap:5px}
+  .stic{width:24px;height:24px;font-size:11px}
+  .stv{font-size:13px}
   .stl{font-size:8px}
+  
+  /* الخريطة المصغرة */
+  #reqMapInline{height:160px!important}
+  .map-legend{bottom:5px;right:5px;padding:5px 8px;font-size:9px}
+  .map-legend-item{font-size:9px;margin-bottom:3px}
+  
+  /* القوائم */
   .ntabs{display:none}
   .bout{display:none}
   .mobile-nav{display:block}
+  
+  /* الارتفاعات */
   .dbody{padding-top:60px;padding-bottom:70px}
-  .panel,.ptab{height:calc(100vh - 60px - 70px);padding:12px}
+  .panel,.ptab{height:calc(100vh - 60px - 70px);padding:12px;overflow-y:auto}
   .dreq-wrap{height:calc(100vh - 60px - 70px)}
+  
+  /* الشبكات */
   .acc-grid,.support-grid{grid-template-columns:1fr}
   .monitor-grid{grid-template-columns:1fr 1fr}
-  #reqMapInline{height:180px!important}
-  .map-legend{bottom:5px;right:5px;padding:5px 8px;font-size:9px}
-  .map-legend-item{font-size:9px;margin-bottom:3px}
-  .reqcard{padding:12px}
+  
+  /* بطاقات الطلبات */
+  .reqcard{padding:10px}
   .reqphone{font-size:13px}
+  .rca{padding:7px 10px;font-size:11px}
+  
+  /* أزرار السائق السريعة */
   .qbtn{padding:8px 5px;font-size:10px}
   .qbtn i{font-size:14px}
+  
+  /* رأس العمود */
+  .col-hd{padding:10px 12px;flex-wrap:wrap;gap:6px}
+  .col-hd-title{font-size:13px}
+  
+  /* بطاقة الملف الشخصي للسائق */
+  .pcard{padding:12px;margin:8px}
+  .ssec{padding:8px 10px}
+  .qbtns{gap:5px}
 }
 @media(min-width:641px) and (max-width:900px){
   .dside{width:210px}.sup-req-col{width:290px}
@@ -780,8 +811,10 @@ const findTenantByCode = async code => {
 
   if (!info || typeof info !== "object") return null;
 
+  // حفظ الكود الأصلي للمشرف
   return {
     codeHash: h,
+    _inviteCode: code.toLowerCase().trim(),
     ...info
   };
 };
@@ -946,8 +979,14 @@ const cleanNotifs = async () => {
         if (n.read || (n.ts||0) < cutoff) pu[`driverPushNotifs/${drvId}/${k}`] = null;
       });
     });
-    if (Object.keys(pu).length > 0) update(ref(_db, T('')), pu).catch(() => {});
-  }
+if (Object.keys(pu).length > 0) {
+      // بناء updates بمسارات كاملة من جذر الـ tenant
+      const fullUpdates = {};
+      Object.entries(pu).forEach(([path, val]) => {
+        fullUpdates[path] = val;
+      });
+      await update(tRef(''), fullUpdates).catch(() => {});
+    }  }
 };
 // تنظيف كل ساعة
 setInterval(() => { if (CR === 'supervisor') cleanNotifs(); }, 3600000);
@@ -1300,37 +1339,45 @@ const listenDriverPushNotifs=drvId=>{
 
 const listenDriverRequests = drvId => {
   const r = tRef(`driverRequests/${drvId}`);
-  let known = {};
+  // لا نستخدم known هنا - نعتمد على onValue بشكل كامل
   onValue(r, snap => {
     if (!snap.exists()) return;
     const all = snap.val();
     const curId = $('currentReqId').value;
-    
+
     // التحقق من إلغاء الطلب الحالي
-    if (curId && all[curId]?.status === 'cancelled') {
+    if (curId && all[curId] && all[curId].status === 'cancelled') {
       clearInterval(reqCountdownTimer);
       $('ReqNotif').classList.remove('on');
+      $('currentReqId').value = '';
       if (CU && (CU.taxiColor === 'red' || CU.status === 'busy')) {
         update(tRef(`drivers/${CU.id}`), { taxiColor: 'green', status: 'online', lastSeen: Date.now() }).catch(() => {});
         CU.taxiColor = 'green'; CU.status = 'online';
         const b = $('drvStatusBadge'); if (b) b.innerHTML = getStatusBadge(CU);
       }
       playSound('cancel'); toast('info', '🚫 تم إلغاء الطلب', 'أنت الآن متاح 🟢');
+      return;
     }
-    
-    Object.entries(all).forEach(([rid, rd]) => {
-      if (known[rid]) return; known[rid] = true;
-      
-      // ✅ التعديل: إزالة شرط rid !== curId
-      if (rd.status === 'pending' || rd.status === 'modified') {
-        // إذا كان هناك طلب مفتوح، أغلقه أولاً
-        if ($('ReqNotif').classList.contains('on')) {
-          clearInterval(reqCountdownTimer);
-          $('ReqNotif').classList.remove('on');
-        }
-        showDriverReq(rid, rd);
-      }
-    });
+
+    // ابحث عن أحدث طلب pending أو modified
+    const pending = Object.entries(all)
+      .filter(([, rd]) => rd.status === 'pending' || rd.status === 'modified')
+      .sort((a, b) => (b[1].ts || 0) - (a[1].ts || 0));
+
+    if (pending.length === 0) return;
+
+    const [rid, rd] = pending[0];
+
+    // لو نفس الطلب المفتوح حالياً ولم يتغير → لا تعيد العرض
+    if (curId === rid && $('ReqNotif').classList.contains('on') && rd.status === 'pending') return;
+
+    // أغلق أي إشعار سابق
+    if ($('ReqNotif').classList.contains('on')) {
+      clearInterval(reqCountdownTimer);
+      $('ReqNotif').classList.remove('on');
+    }
+
+    showDriverReq(rid, rd);
   });
   LSNRS.push({ r });
 };
@@ -1395,6 +1442,39 @@ window.submitReject=async()=>{
   await update(tRef(`driverRequests/${CU.id}/${rid}`),{status:'rejected',rejectedAt:Date.now(),reason});
   await push(tRef('notifications'),{type:'reject',driverId:CU.id,driverName:CU.name,reqId:rid,reason,msg:`❌ السائق ${CU.name} رفض — ${reason}`,ts:Date.now(),read:false});
   $('ReqNotif').classList.remove('on');vibrate([100,50,100]);playSound('reject');toast('info','تم رفض الطلب','');
+};
+
+window.inlineAccept = async id => {
+  const snap = await get(tRef(`driverRequests/${CU.id}/${id}`)).catch(() => null);
+  if (!snap || !snap.exists()) return toast('warn', 'الطلب غير موجود', '');
+  const st = snap.val().status;
+  if (st === 'cancelled') return toast('warn', 'تم إلغاء هذا الطلب', '');
+  if (st !== 'pending' && st !== 'modified') return;
+  const ts = Date.now();
+  await update(tRef(`driverRequests/${CU.id}/${id}`), { status: 'accepted', acceptedAt: ts });
+  await update(tRef(`drivers/${CU.id}`), { taxiColor: 'red', status: 'busy' });
+  CU.taxiColor = 'red'; CU.status = 'busy';
+  if ($('currentReqId').value === id) {
+    clearInterval(reqCountdownTimer);
+    $('ReqNotif').classList.remove('on');
+    $('currentReqId').value = '';
+  }
+  await push(tRef('notifications'), { type: 'accept', driverId: CU.id, driverName: CU.name, reqId: id, msg: `✅ السائق ${CU.name} قبل الطلب`, ts, read: false });
+  vibrate([200]); playSound('accept'); toast('ok', 'تم قبول الطلب 🚕', '');
+  const b = $('drvStatusBadge'); if (b) b.innerHTML = getStatusBadge(CU);
+};
+
+window.inlineReject = async id => {
+  const reason = prompt('سبب الرفض (مطلوب):', '');
+  if (!reason || !reason.trim()) return toast('warn', 'يرجى كتابة سبب الرفض', '');
+  await update(tRef(`driverRequests/${CU.id}/${id}`), { status: 'rejected', rejectedAt: Date.now(), reason: reason.trim() });
+  if ($('currentReqId').value === id) {
+    clearInterval(reqCountdownTimer);
+    $('ReqNotif').classList.remove('on');
+    $('currentReqId').value = '';
+  }
+  await push(tRef('notifications'), { type: 'reject', driverId: CU.id, driverName: CU.name, reqId: id, reason: reason.trim(), msg: `❌ السائق ${CU.name} رفض — ${reason.trim()}`, ts: Date.now(), read: false });
+  vibrate([100, 50, 100]); playSound('reject'); toast('info', 'تم رفض الطلب', '');
 };
 
 const updStatus=async s=>{
@@ -1612,14 +1692,25 @@ const mkDriverReqCard=(id,req)=>{
   const confirmBtn=req.status==='modified'&&!req.driverConfirmed?`<div class="mod-notice"><i class="fas fa-bell"></i>يرجى تأكيد استلام التعديل</div><button class="rca rca-green" onclick="confirmMod('${id}')"><i class="fas fa-check"></i> تأكيد</button>`:'';
   const cancelMsg=req.status==='cancelled'?`<div class="cancel-msg"><i class="fas fa-ban"></i>تم إلغاء الطلب</div>`:'';
   const msgShow=req.message?`<div class="req-msg-box" style="margin-bottom:9px"><div class="req-msg-from"><i class="fas fa-user-tie" style="margin-left:4px"></i>رسالة المشرف</div><div class="req-msg-text">${esc(req.message)}</div></div>`:'';
-  const showActs=(req.status==='accepted'||req.status==='waiting'||req.status==='near')&&!req.doneDelivery;
-  const acts=showActs?`<button class="rca rca-orange" onclick="setDrvWaiting('${id}')"><i class="fas fa-hourglass-half"></i> انتظار</button><button class="rca rca-amber" onclick="setDrvNear('${id}')"><i class="fas fa-map-pin"></i> قريب</button><button class="rca rca-green" onclick="doneDelivery('${id}')"><i class="fas fa-flag-checkered"></i> تم التوصيل</button>`:'';
-  return`<div class="reqcard ${cls} ${noResp}" id="dreq-${id}">
+const showPendingActs = req.status === 'pending' || req.status === 'modified';
+  const showActiveActs = (req.status === 'accepted' || req.status === 'waiting' || req.status === 'near') && !req.doneDelivery;
+  
+  const pendingActs = showPendingActs ? `
+    <div style="display:flex;gap:7px;flex-wrap:wrap;padding:10px;background:var(--amber-l);border:1px solid var(--amber-m);border-radius:var(--r);margin-top:6px;animation:reqPulse 2s infinite">
+      <div style="width:100%;font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px;display:flex;align-items:center;gap:5px">
+        <i class="fas fa-clock"></i> يرجى الرد — الوقت ينفد
+        <span id="inline-timer-${id}" style="font-weight:900;color:var(--red);margin-right:auto"></span>
+      </div>
+      <button class="rca rca-green" style="flex:1;padding:10px;font-size:13px;font-weight:800" onclick="inlineAccept('${id}')"><i class="fas fa-check"></i> قبول</button>
+      <button class="rca rca-red" style="flex:1;padding:10px;font-size:13px;font-weight:800" onclick="inlineReject('${id}')"><i class="fas fa-times"></i> رفض</button>
+    </div>` : '';
+  
+  const acts = showActiveActs ? `<button class="rca rca-orange" onclick="setDrvWaiting('${id}')"><i class="fas fa-hourglass-half"></i> انتظار</button><button class="rca rca-amber" onclick="setDrvNear('${id}')"><i class="fas fa-map-pin"></i> قريب</button><button class="rca rca-green" onclick="doneDelivery('${id}')"><i class="fas fa-flag-checkered"></i> تم التوصيل</button>` : '';  return`<div class="reqcard ${cls} ${noResp}" id="dreq-${id}">
     <div class="reqtop"><div class="reqphone"><i class="fas fa-phone"></i>${esc(req.phone||'-')}</div>
     <div class="reqtimes"><span class="sbadge ${sBadgeCls}" style="font-size:10px">${sLbl}</span><span class="reqtime"><i class="fas fa-clock"></i>${fmt(req.ts||Date.now())}</span>${req.acceptedAt?`<span class="reqtime" style="color:var(--green)"><i class="fas fa-check"></i>${fmt(req.acceptedAt)}</span>`:''}</div></div>
     <div class="reqdetails"><i class="fas fa-map-marker-alt"></i><span>${esc(req.details||'-')}</span></div>
     ${msgShow}${modDiff}${cancelMsg}${confirmBtn}
-    <div class="reqacts">${acts}</div></div>`;
+    <div class="reqacts">${acts}</div>${pendingActs}</div>`;
 };
 
 window.setDrvWaiting=async id=>{
@@ -1640,7 +1731,11 @@ window.confirmMod=async id=>{
 window.doneDelivery=async id=>{
   if(!CU)return;
   const chk=await get(tRef(`driverRequests/${CU.id}/${id}`)).catch(()=>null);
-  if(!chk||!chk.exists()||chk.val().status==='cancelled')return toast('warn','الطلب ملغي','');
+  if(!chk||!chk.exists())return toast('warn','الطلب غير موجود','');
+  const chkStatus = chk.val().status;
+  if(chkStatus==='cancelled')return toast('warn','الطلب ملغي','');
+  // السماح بإتمام التوصيل حتى لو كان modified أو accepted أو waiting أو near
+  if(chkStatus!=='accepted'&&chkStatus!=='waiting'&&chkStatus!=='near'&&chkStatus!=='modified')return toast('warn','لا يمكن إتمام هذا الطلب','');
   const count=(CU.totalDeliveries||0)+1;
   await update(tRef(`drivers/${CU.id}`),{taxiColor:'green',status:'online',totalDeliveries:count});
   CU.totalDeliveries=count;CU.taxiColor='green';CU.status='online';
@@ -1658,7 +1753,7 @@ window.quickDoneDelivery=async()=>{
   if(!CU)return;
   const snap=await get(tRef(`driverRequests/${CU.id}`)).catch(()=>null);
   if(!snap||!snap.exists())return toast('warn','لا يوجد طلب نشط','');
-  const active=Object.entries(snap.val()).find(([,r])=>(r.status==='accepted'||r.status==='waiting'||r.status==='near')&&!r.doneDelivery);
+  const active=Object.entries(snap.val()).find(([,r])=>(r.status==='accepted'||r.status==='waiting'||r.status==='near'||r.status==='modified')&&!r.doneDelivery);
   if(!active)return toast('warn','لا يوجد طلب نشط','');
   const[id,req]=active;
   if(!confirm(`تأكيد إتمام التوصيل؟\n📞 ${req.phone||''}\n📍 ${(req.details||'').substring(0,50)}`))return;
@@ -1807,40 +1902,36 @@ const loadSupNotifList=()=>{
   addL(r);
 };
 
+let _addReqBusy = false;
 window.addReqItem = async () => {
+  if (_addReqBusy) return;
   const phone = ($('req-phone').value || '').trim();
   const details = ($('req-details').value || '').trim();
   if (!phone || !details) return shAl('al-req', 'err', 'يرجى ملء جميع الحقول');
   if (!/^[0-9+]{7,15}$/.test(phone.replace(/\s/g, ''))) return shAl('al-req', 'err', 'رقم الهاتف غير صحيح');
   
-  // ✅ منع الضغط المتكرر
-  const btn = event.target;
-  const origText = btn.innerHTML;
-  btn.innerHTML = '<span class="spin"></span> جار...';
-  btn.disabled = true;
+  _addReqBusy = true;
+  const btn = $('MaddReq').querySelector('.bp');
+  const origText = btn ? btn.innerHTML : '';
+  if (btn) { btn.innerHTML = '<span class="spin"></span> جار...'; btn.disabled = true; }
   
   try {
-    await push(tRef('recvRequests'), { 
-      phone, 
-      details, 
-      ts: Date.now(), 
-      addedBy: CU?.name || 'المشرف' 
+    await push(tRef('recvRequests'), {
+      phone,
+      details,
+      ts: Date.now(),
+      addedBy: CU?.name || 'المشرف'
     });
     $('req-phone').value = '';
     $('req-details').value = '';
-    shAl('al-req', 'ok', '✅ تم إضافة الطلب');
-    toast('ok', 'تم إضافة الطلب', '');
+    toast('ok', '✅ تم إضافة الطلب', '');
     playSound('notif');
-    
-    // ✅ إغلاق المودال بعد تأخير قصير
-    setTimeout(() => {
-      CM('MaddReq');
-    }, 500);
+    CM('MaddReq');
   } catch (err) {
     shAl('al-req', 'err', 'خطأ: ' + (err.message || ''));
   } finally {
-    btn.innerHTML = origText;
-    btn.disabled = false;
+    if (btn) { btn.innerHTML = origText; btn.disabled = false; }
+    setTimeout(() => { _addReqBusy = false; }, 1000);
   }
 };
 window.delRecvItem=async id=>{if(!confirm('حذف هذا الطلب؟'))return;await remove(tRef(`recvRequests/${id}`));toast('ok','تم الحذف','');};
@@ -1944,9 +2035,13 @@ window.selectTaxi=id=>{
   $('confirmSelBtn').disabled=false;$('confirmSelBtn').style.opacity='1';
 };
 window.closeTaxiSel=()=>{$('SelTaxiModal').classList.remove('on');selTaxiId=null;selReqData=null;};
+let _sendBusy = false;
 window.confirmTaxiSel=async()=>{
   if(!selTaxiId||!selReqData)return;
+  if(_sendBusy)return;
   const msg=prompt('رسالة للسائق (اختياري، إلغاء للتخطي):','');
+  if(msg===null)return; // المستخدم ضغط إلغاء
+  _sendBusy=true;
   const btn=$('confirmSelBtn');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;btn.style.opacity='.7';
   try{
     const payload={phone:selReqData.phone,details:selReqData.details,status:'pending',ts:Date.now(),sentBy:CU.name,sentAt:Date.now()};
@@ -1956,6 +2051,7 @@ window.confirmTaxiSel=async()=>{
     toast('ok','تم إرسال الطلب للسائق 🚕','');playSound('notif');closeTaxiSel();
   }catch(err){toast('err','خطأ',err.message||'');}
   btn.innerHTML='<i class="fas fa-paper-plane"></i> إرسال';btn.disabled=false;btn.style.opacity='1';
+  setTimeout(()=>{_sendBusy=false;},1500);
 };
 
 /* ═══════════════════════════════════════════════════════
@@ -2306,28 +2402,18 @@ const renderSupport=async role=>{
 window.reportBug = async () => {
   const msg = prompt('صف المشكلة التي واجهتها:', '');
   if (!msg || !msg.trim()) return;
-  
-  // الرقم الإسرائيلي مع رمز الدولة
-  const waNumber = '972595125423';  // 972 إسرائيل ثم الرقم بدون 0
-  const userInfo = CU?.name ? `المستخدم: ${CU.name}\n` : '';
-  const fullMsg = `${userInfo}التاريخ: ${new Date().toLocaleString('ar')}\n\nالمشكلة:\n${msg.trim()}`;
+  const waNumber = '972595125423';
+  const userInfo = CU?.name ? `👤 المستخدم: ${CU.name}\n📱 الهاتف: ${CU.phone||'-'}\n🏢 المكتب: ${TENANT_INFO?.name||'-'}\n` : '';
+  const roleLabel = CR === 'driver' ? '🚕 سائق' : CR === 'supervisor' ? '👨‍💼 مشرف' : '📥 مستقبل';
+  const fullMsg = `🐛 بلاغ مشكلة — منصة التاكسي\n\n${userInfo}📋 الدور: ${roleLabel}\n📅 التاريخ: ${new Date().toLocaleString('ar-PS')}\n\n❗ المشكلة:\n${msg.trim()}`;
   const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(fullMsg)}`;
-  
-  // فتح واتساب
   window.open(waLink, '_blank');
-  
-  // حفظ نسخة احتياطية في قاعدة البيانات
-  await push(tRef('errorLogs'), { 
-    msg: msg.trim(), 
-    userId: CU?.id || 'anon', 
-    userName: CU?.name || 'زائر',
-    ts: Date.now(),
-    reportedVia: 'whatsapp'
+  await push(tRef('errorLogs'), {
+    msg: msg.trim(), userId: CU?.id || 'anon', userName: CU?.name || 'زائر',
+    role: CR || 'unknown', officeId: TENANT_ID || '-', ts: Date.now()
   }).catch(() => {});
-  
   toast('ok', '✅ تم فتح واتساب', 'أرسل المشكلة وسيتم التواصل معك');
-};
-/* ═══ DRIVER PROFILE ═══ */
+};/* ═══ DRIVER PROFILE ═══ */
 const renderDProfile=()=>{
   $('dbody').innerHTML=`<div class="ptab">
     <div class="cbox" style="text-align:center">
@@ -2371,7 +2457,8 @@ window.delMyAcc=async()=>{
 const renderSProfile = () => {
   const info = TENANT_INFO || { name: '-' };
   // توليد كود دعوة واضح للمشرف
-  const inviteCodePlain = `DRV-${(TENANT_ID || 'XXXX').toUpperCase()}-2024`;
+  // استخراج كود الدعوة الحقيقي من TENANT_INFO
+  const inviteCodePlain = TENANT_INFO?._inviteCode || `DRV-${(TENANT_ID||'XXXX').toUpperCase()}-2024`;
   
   $('dbody').innerHTML = `<div class="ptab">
     <div class="cbox" style="text-align:center">
