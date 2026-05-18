@@ -130,11 +130,29 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
 
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--bg);border-top:1px solid var(--border);box-shadow:0 -2px 10px rgba(0,0,0,.06);padding:6px 4px calc(8px + env(safe-area-inset-bottom))}
 .mobile-nav .mob-tabs{display:flex;justify-content:space-around;align-items:flex-end;gap:0px}
-.mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;}
-.mob-tab.on{color:var(--primary);background:var(--primary-l)}
-.mob-tab.sup-on{color:var(--amber);background:var(--amber-l)}
-.mob-tab i{font-size:17px}
-.mob-tab-badge{position:absolute;top:3px;right:10px;background:var(--red);color:#fff;font-size:8px;font-weight:800;padding:1px 4px;border-radius:6px;min-width:14px;text-align:center}
+.mob-tab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:6px 8px;border-radius:12px;cursor:pointer;
+  font-size:10px;font-weight:700;color:var(--text3);
+  min-width:52px;flex:1;position:relative;transition:var(--tr);
+  border:none;background:transparent;font-family:'Cairo',sans-serif;
+}
+.mob-tab:hover{background:var(--bg3);color:var(--text2)}
+.mob-tab.on{color:var(--primary);background:var(--primary-l);border-radius:12px}
+.mob-tab.sup-on{color:var(--amber);background:var(--amber-l);border-radius:12px}
+.mob-tab i{font-size:19px;display:block}
+.mob-tab span.mob-label{font-size:9.5px;font-weight:700;white-space:nowrap;margin-top:1px}
+.mob-tab-badge{position:absolute;top:2px;right:6px;background:var(--red);color:#fff;font-size:8px;font-weight:800;padding:1px 4px;border-radius:6px;min-width:14px;text-align:center}
+
+.mobile-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--bg);border-top:1px solid var(--border);
+  box-shadow:0 -4px 16px rgba(0,0,0,.08);
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+}
+.mobile-nav .mob-tabs{
+  display:flex;justify-content:space-around;align-items:stretch;gap:2px;
+}
 
 /* ── DRIVER LAYOUT ── */
 .dlayout{display:flex;height:calc(100vh - 60px)}
@@ -795,15 +813,13 @@ const _h=async s=>{
    TENANT MAP — هاشات SHA-256 فقط، لا كلمات مرور، لا أكواد نصية
    ═══════════════════════════════════════════════════════════ */
 const TENANT_MAP_H={
-  // officeCodeHash => { name, adminPwH, inviteH }
-  '85337816d263d362acb23a4255a636191075c2a90c47f2ee6db3362f7df11203':{name:'مكتب طولكرم 1',adminPwH:'a8969a0ab077f0514d6bd965c8dcc64dd56c4f811f72eeac8bf53d68e1a35be7',inviteH:'6a06097c0b08920cf06e6f9a5f8948285d6781ca8a0ca66a3162428f76b869ae'},
-  'a29c9f577f2a3a51aa369c448b008eeff2675d10bf8a59dd9dbde6e80c742a9a':{name:'مكتب طولكرم 2',adminPwH:'1aa02d981ece259e3ecda022a4b14e217678de82fddce412ffdc65d808bb4248',inviteH:'1ab5b47f2dc35a43ebc065a23438b6d56e05cf87faae17d15dbf682fc31ba121'},
-  '87cdd830c3734aaf221ee0bf490375ed7e0e79fb12fd53c41e015e07284009df':{name:'مكتب طولكرم 3',adminPwH:'528d867a425af9c41bfea253360fe5b5f165c5a321a7f548dfa0dc55b8a73ba3',inviteH:'41e5ead143651a65f9c777eeb45b4468143a0476be60412343a0b7245dc02602'},
-  '293c9b8d72684cf345205b0c0451f6d652b3dc7cfe1a4b4b926af296fbb85982':{name:'مكتب طولكرم 4',adminPwH:'4112c44e57669c0237d91f34196442b64e2d8d9afe47e7d750b62b7c5aa108c7',inviteH:'208a43370323aaab8d4271dcf5d8a9c448851a722659387945c00913ab281a9f'},
-  '4741ec93bb4278b70b6be756cd6ead5400e6cb977b4d5723174708bd3206f4b1':{name:'مكتب طولكرم 5',adminPwH:'486abc10319a5faca753324f486ba67d44fc4002ddae99caae1de685d97a8257',inviteH:'5b56330e496f9c9bd592c182ab85af6d2c07bc10622ff28c18ea5f1de519a901'},
-  'bf9a83c04383084f6bcec5bb86440c2b3cfbbf6122379ce9d35d3a5cb36d3371':{name:'مكتب طولكرم 6',adminPwH:'c4282ba0020765a9cf1b11a265318382ea6cb1dacb3bf6e7027f8185d7a18203',inviteH:'116073a9350cb698ce2e2f3a2ef95decdf8792be5cef2fd912442b0696ddee90'},
-};
-const findTenantByCode = async code => {
+  '85337816d263d362acb23a4255a636191075c2a90c47f2ee6db3362f7df11203':{name:'مكتب طولكرم 1',adminPwH:'a8969a0ab077f0514d6bd965c8dcc64dd56c4f811f72eeac8bf53d68e1a35be7',inviteH:'6a06097c0b08920cf06e6f9a5f8948285d6781ca8a0ca66a3162428f76b869ae',inviteCode:'DRV-TLK1-2024'},
+  'a29c9f577f2a3a51aa369c448b008eeff2675d10bf8a59dd9dbde6e80c742a9a':{name:'مكتب طولكرم 2',adminPwH:'1aa02d981ece259e3ecda022a4b14e217678de82fddce412ffdc65d808bb4248',inviteH:'1ab5b47f2dc35a43ebc065a23438b6d56e05cf87faae17d15dbf682fc31ba121',inviteCode:'DRV-TLK2-2024'},
+  '87cdd830c3734aaf221ee0bf490375ed7e0e79fb12fd53c41e015e07284009df':{name:'مكتب طولكرم 3',adminPwH:'528d867a425af9c41bfea253360fe5b5f165c5a321a7f548dfa0dc55b8a73ba3',inviteH:'41e5ead143651a65f9c777eeb45b4468143a0476be60412343a0b7245dc02602',inviteCode:'DRV-TLK3-2024'},
+  '293c9b8d72684cf345205b0c0451f6d652b3dc7cfe1a4b4b926af296fbb85982':{name:'مكتب طولكرم 4',adminPwH:'4112c44e57669c0237d91f34196442b64e2d8d9afe47e7d750b62b7c5aa108c7',inviteH:'208a43370323aaab8d4271dcf5d8a9c448851a722659387945c00913ab281a9f',inviteCode:'DRV-TLK4-2024'},
+  '4741ec93bb4278b70b6be756cd6ead5400e6cb977b4d5723174708bd3206f4b1':{name:'مكتب طولكرم 5',adminPwH:'486abc10319a5faca753324f486ba67d44fc4002ddae99caae1de685d97a8257',inviteH:'5b56330e496f9c9bd592c182ab85af6d2c07bc10622ff28c18ea5f1de519a901',inviteCode:'DRV-TLK5-2024'},
+  'bf9a83c04383084f6bcec5bb86440c2b3cfbbf6122379ce9d35d3a5cb36d3371':{name:'مكتب طولكرم 6',adminPwH:'c4282ba0020765a9cf1b11a265318382ea6cb1dacb3bf6e7027f8185d7a18203',inviteH:'116073a9350cb698ce2e2f3a2ef95decdf8792be5cef2fd912442b0696ddee90',inviteCode:'DRV-TLK6-2024'},
+};const findTenantByCode = async code => {
   if (!code) return null;
 
   const h = await _h(code.toLowerCase().trim());
@@ -814,7 +830,7 @@ const findTenantByCode = async code => {
   // حفظ الكود الأصلي للمشرف
   return {
     codeHash: h,
-    _inviteCode: code.toLowerCase().trim(),
+    _inviteCode: info.inviteCode || `DRV-${code.toUpperCase()}-2024`,
     ...info
   };
 };
@@ -1538,8 +1554,8 @@ const initDash=()=>{
     const navr=$('navr');if(navr&&!$('monitorBtn'))navr.insertBefore(monBtn,navr.firstChild);
     if(mobNav&&mobTabs){
       mobNav.style.display='block';
-      mobTabs.innerHTML=cfg.map((t,i)=>`<button class="mob-tab${i===0?' sup-on':''}" id="mnt-${t.id}" onclick="nTab('${t.id}')">${t.badge?`<span class="mob-tab-badge" id="mob-notif-badge" style="display:none">0</span>`:''}${t.badge2?`<span class="mob-tab-badge" id="mob-approval-badge" style="display:none;background:var(--green)">0</span>`:''}<i class="${t.icon}"></i>${t.label}</button>`).join('');
-      mobTabs.innerHTML+=`<button class="mob-tab" onclick="openMonitor()"><i class="fas fa-tv"></i>مراقبة</button>`;
+      mobTabs.innerHTML=cfg.map((t,i)=>`<button class="mob-tab${i===0?' sup-on':''}" id="mnt-${t.id}" onclick="nTab('${t.id}')">${t.badge?`<span class="mob-tab-badge" id="mob-notif-badge" style="display:none">0</span>`:''}${t.badge2?`<span class="mob-tab-badge" id="mob-approval-badge" style="display:none;background:var(--green)">0</span>`:''}<i class="${t.icon}"></i><span class="mob-label">${t.label}</span></button>`).join('');
+mobTabs.innerHTML+=`<button class="mob-tab" onclick="openMonitor()"><i class="fas fa-tv"></i><span class="mob-label">مراقبة</span></button>`;
     }
     renderSupReqs();
   }
@@ -2600,7 +2616,7 @@ const initRecvDash=()=>{
   ntabs.innerHTML=recvTabsCfg.map((t,i)=>`<button class="ntab${i===0?' sup-on':''}" id="rnt-${t.id}" onclick="recvTab('${t.id}')"><i class="${t.icon}"></i> ${t.label}${t.badge?` <span class="ntab-badge" id="recv-req-badge" style="display:none">0</span>`:''}</button>`).join('');
   if(mobNav&&mobTabs){
     mobNav.style.display='block';
-    mobTabs.innerHTML=recvTabsCfg.map((t,i)=>`<button class="mob-tab${i===0?' sup-on':''}" id="rmnt-${t.id}" onclick="recvTab('${t.id}')">${t.badge?`<span class="mob-tab-badge" id="mob-recv-badge" style="display:none">0</span>`:''}<i class="${t.icon}"></i>${t.label}</button>`).join('');
+    mobTabs.innerHTML=recvTabsCfg.map((t,i)=>`<button class="mob-tab${i===0?' sup-on':''}" id="rmnt-${t.id}" onclick="recvTab('${t.id}')">${t.badge?`<span class="mob-tab-badge" id="mob-recv-badge" style="display:none">0</span>`:''}<i class="${t.icon}"></i><span class="mob-label">${t.label}</span></button>`).join('');
   }
   loadRecvDrivers();
   listenRecvNewRequests();
