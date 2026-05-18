@@ -385,17 +385,33 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
 .gps-mid{background:var(--amber-l);color:var(--amber);border:1px solid var(--amber-m)}
 
 @media(max-width:640px){
-  .dlayout,.sup-req-layout{flex-direction:column}
-  .dside{width:100%;flex:0 0 auto;max-height:45vh;border-left:none;border-bottom:1px solid var(--border)}
-  .sup-req-col{width:100%;max-height:40vh;border-left:none;border-bottom:1px solid var(--border)}
+  .dlayout,.sup-req-layout{flex-direction:column;height:auto;min-height:calc(100vh - 60px)}
+  .dside{width:100%;flex:0 0 auto;max-height:35vh;border-left:none;border-bottom:1px solid var(--border);overflow-y:auto}
+  .sup-req-col{width:100%;max-height:none;border-left:none;border-bottom:1px solid var(--border);margin-bottom:10px}
+  .col-scroll{max-height:35vh;overflow-y:auto}
+  .sup-req-main{min-height:auto}
+  .ststrip{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:6px;padding:8px 12px}
+  .st{flex-shrink:0;padding:6px 10px}
+  .stv{font-size:14px}
+  .stl{font-size:8px}
   .ntabs{display:none}
   .bout{display:none}
   .mobile-nav{display:block}
   .dbody{padding-top:60px;padding-bottom:70px}
-  .panel,.ptab{height:calc(100vh - 60px - 70px)}
+  .panel,.ptab{height:calc(100vh - 60px - 70px);padding:12px}
   .dreq-wrap{height:calc(100vh - 60px - 70px)}
   .acc-grid,.support-grid{grid-template-columns:1fr}
   .monitor-grid{grid-template-columns:1fr 1fr}
+  #reqMapInline{height:180px!important}
+  .map-legend{bottom:5px;right:5px;padding:5px 8px;font-size:9px}
+  .map-legend-item{font-size:9px;margin-bottom:3px}
+  .reqcard{padding:12px}
+  .reqphone{font-size:13px}
+  .qbtn{padding:8px 5px;font-size:10px}
+  .qbtn i{font-size:14px}
+}
+@media(min-width:641px) and (max-width:900px){
+  .dside{width:210px}.sup-req-col{width:290px}
 }
 @media(min-width:641px) and (max-width:900px){
   .dside{width:210px}.sup-req-col{width:290px}
@@ -425,7 +441,7 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
             <div style="font-family:'Tajawal',sans-serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:6px">أدخل رمز مكتبك</div>
             <div style="font-size:12px;color:rgba(255,255,255,.5)">الرمز مكوّن من 4 أحرف — يعطيك إياه مزود الخدمة</div>
           </div>
-          <input id="tg-code-input" type="text" maxlength="8" placeholder="مثال: a1b2"
+          <input id="tg-code-input" type="text" maxlength="8" placeholder="مثال: "
             style="width:100%;padding:16px 18px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.15);border-radius:14px;color:#fff;font-size:18px;font-weight:800;text-align:center;letter-spacing:4px;outline:none;font-family:'Cairo',sans-serif;margin-bottom:8px"
             oninput="this.value=this.value.toLowerCase().trim();tgClearErr()"
             onkeydown="if(event.key==='Enter')tgSubmit()">
@@ -1282,32 +1298,41 @@ const listenDriverPushNotifs=drvId=>{
   LSNRS.push({r});
 };
 
-const listenDriverRequests=drvId=>{
-  const r=tRef(`driverRequests/${drvId}`);
-  let known={};
-  onValue(r,snap=>{
-    if(!snap.exists())return;
-    const all=snap.val();
-    // فحص إلغاء الطلب الحالي المفتوح
-    const curId=$('currentReqId').value;
-    if(curId&&all[curId]?.status==='cancelled'){
+const listenDriverRequests = drvId => {
+  const r = tRef(`driverRequests/${drvId}`);
+  let known = {};
+  onValue(r, snap => {
+    if (!snap.exists()) return;
+    const all = snap.val();
+    const curId = $('currentReqId').value;
+    
+    // التحقق من إلغاء الطلب الحالي
+    if (curId && all[curId]?.status === 'cancelled') {
       clearInterval(reqCountdownTimer);
       $('ReqNotif').classList.remove('on');
-      if(CU&&(CU.taxiColor==='red'||CU.status==='busy')){
-        update(tRef(`drivers/${CU.id}`),{taxiColor:'green',status:'online',lastSeen:Date.now()}).catch(()=>{});
-        CU.taxiColor='green';CU.status='online';
-        const b=$('drvStatusBadge');if(b)b.innerHTML=getStatusBadge(CU);
+      if (CU && (CU.taxiColor === 'red' || CU.status === 'busy')) {
+        update(tRef(`drivers/${CU.id}`), { taxiColor: 'green', status: 'online', lastSeen: Date.now() }).catch(() => {});
+        CU.taxiColor = 'green'; CU.status = 'online';
+        const b = $('drvStatusBadge'); if (b) b.innerHTML = getStatusBadge(CU);
       }
-      playSound('cancel');toast('info','🚫 تم إلغاء الطلب','أنت الآن متاح 🟢');
+      playSound('cancel'); toast('info', '🚫 تم إلغاء الطلب', 'أنت الآن متاح 🟢');
     }
-    Object.entries(all).forEach(([rid,rd])=>{
-      if(known[rid])return;known[rid]=true;
-      if((rd.status==='pending'||rd.status==='modified')&&rid!==curId){
-        showDriverReq(rid,rd);
+    
+    Object.entries(all).forEach(([rid, rd]) => {
+      if (known[rid]) return; known[rid] = true;
+      
+      // ✅ التعديل: إزالة شرط rid !== curId
+      if (rd.status === 'pending' || rd.status === 'modified') {
+        // إذا كان هناك طلب مفتوح، أغلقه أولاً
+        if ($('ReqNotif').classList.contains('on')) {
+          clearInterval(reqCountdownTimer);
+          $('ReqNotif').classList.remove('on');
+        }
+        showDriverReq(rid, rd);
       }
     });
   });
-  LSNRS.push({r});
+  LSNRS.push({ r });
 };
 
 const showDriverReq=(rid,rd)=>{
@@ -1782,13 +1807,41 @@ const loadSupNotifList=()=>{
   addL(r);
 };
 
-window.addReqItem=async()=>{
-  const phone=($('req-phone').value||'').trim(),details=($('req-details').value||'').trim();
-  if(!phone||!details)return shAl('al-req','err','يرجى ملء جميع الحقول');
-  if(!/^[0-9+]{7,15}$/.test(phone.replace(/\s/g,'')))return shAl('al-req','err','رقم الهاتف غير صحيح');
-  await push(tRef('recvRequests'),{phone,details,ts:Date.now(),addedBy:CU?.name||'المشرف'});
-  $('req-phone').value='';$('req-details').value='';
-  CM('MaddReq');toast('ok','تم إضافة الطلب','');playSound('notif');
+window.addReqItem = async () => {
+  const phone = ($('req-phone').value || '').trim();
+  const details = ($('req-details').value || '').trim();
+  if (!phone || !details) return shAl('al-req', 'err', 'يرجى ملء جميع الحقول');
+  if (!/^[0-9+]{7,15}$/.test(phone.replace(/\s/g, ''))) return shAl('al-req', 'err', 'رقم الهاتف غير صحيح');
+  
+  // ✅ منع الضغط المتكرر
+  const btn = event.target;
+  const origText = btn.innerHTML;
+  btn.innerHTML = '<span class="spin"></span> جار...';
+  btn.disabled = true;
+  
+  try {
+    await push(tRef('recvRequests'), { 
+      phone, 
+      details, 
+      ts: Date.now(), 
+      addedBy: CU?.name || 'المشرف' 
+    });
+    $('req-phone').value = '';
+    $('req-details').value = '';
+    shAl('al-req', 'ok', '✅ تم إضافة الطلب');
+    toast('ok', 'تم إضافة الطلب', '');
+    playSound('notif');
+    
+    // ✅ إغلاق المودال بعد تأخير قصير
+    setTimeout(() => {
+      CM('MaddReq');
+    }, 500);
+  } catch (err) {
+    shAl('al-req', 'err', 'خطأ: ' + (err.message || ''));
+  } finally {
+    btn.innerHTML = origText;
+    btn.disabled = false;
+  }
 };
 window.delRecvItem=async id=>{if(!confirm('حذف هذا الطلب؟'))return;await remove(tRef(`recvRequests/${id}`));toast('ok','تم الحذف','');};
 window.openEditReq=(id,phone,details)=>{
@@ -2250,13 +2303,30 @@ const renderSupport=async role=>{
   }).join('');
 };
 
-window.reportBug=async()=>{
-  const msg=prompt('صف المشكلة التي واجهتها:','');
-  if(!msg||!msg.trim())return;
-  await push(tRef('errorLogs'),{msg:msg.trim(),userId:CU?CU.id:'anon',ts:Date.now()}).catch(()=>{});
-  toast('ok','✅ تم الإبلاغ','شكراً — سيتم مراجعتها');
+window.reportBug = async () => {
+  const msg = prompt('صف المشكلة التي واجهتها:', '');
+  if (!msg || !msg.trim()) return;
+  
+  // الرقم الإسرائيلي مع رمز الدولة
+  const waNumber = '972595125423';  // 972 إسرائيل ثم الرقم بدون 0
+  const userInfo = CU?.name ? `المستخدم: ${CU.name}\n` : '';
+  const fullMsg = `${userInfo}التاريخ: ${new Date().toLocaleString('ar')}\n\nالمشكلة:\n${msg.trim()}`;
+  const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(fullMsg)}`;
+  
+  // فتح واتساب
+  window.open(waLink, '_blank');
+  
+  // حفظ نسخة احتياطية في قاعدة البيانات
+  await push(tRef('errorLogs'), { 
+    msg: msg.trim(), 
+    userId: CU?.id || 'anon', 
+    userName: CU?.name || 'زائر',
+    ts: Date.now(),
+    reportedVia: 'whatsapp'
+  }).catch(() => {});
+  
+  toast('ok', '✅ تم فتح واتساب', 'أرسل المشكلة وسيتم التواصل معك');
 };
-
 /* ═══ DRIVER PROFILE ═══ */
 const renderDProfile=()=>{
   $('dbody').innerHTML=`<div class="ptab">
@@ -2298,9 +2368,12 @@ window.delMyAcc=async()=>{
 };
 
 /* ═══ SUPERVISOR PROFILE ═══ */
-const renderSProfile=()=>{
-  const info=TENANT_INFO||{name:'-'};
-  $('dbody').innerHTML=`<div class="ptab">
+const renderSProfile = () => {
+  const info = TENANT_INFO || { name: '-' };
+  // توليد كود دعوة واضح للمشرف
+  const inviteCodePlain = `DRV-${(TENANT_ID || 'XXXX').toUpperCase()}-2024`;
+  
+  $('dbody').innerHTML = `<div class="ptab">
     <div class="cbox" style="text-align:center">
       <div class="pav" style="width:84px;height:84px;margin:0 auto 12px;font-size:32px;border-color:var(--amber)">👨‍💼</div>
       <div style="font-size:17px;font-weight:900;margin-bottom:6px">${esc(CU.name)}</div>
@@ -2308,6 +2381,13 @@ const renderSProfile=()=>{
       <div style="margin-top:10px;padding:12px;background:var(--primary-l);border:1.5px solid var(--primary-m);border-radius:var(--r);text-align:right">
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px">🏢 المكتب</div>
         <div style="font-size:14px;font-weight:800;color:var(--text)">${esc(info.name)}</div>
+      </div>
+      <!-- ✅ كود الدعوة الجديد -->
+      <div style="margin-top:8px;padding:12px;background:linear-gradient(135deg,#D97706,#B45309);border-radius:var(--r);text-align:center">
+        <div style="font-size:10px;color:rgba(255,255,255,.7);margin-bottom:4px">🎟️ كود دعوة السائقين</div>
+        <div style="font-size:18px;font-weight:900;color:#fff;letter-spacing:3px;font-family:monospace;direction:ltr">${inviteCodePlain}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:4px">أعطِ هذا الكود للسائقين الجدد عند التسجيل</div>
+        <button onclick="copyInviteCode('${inviteCodePlain}')" style="margin-top:8px;padding:5px 12px;background:rgba(255,255,255,.2);border:none;border-radius:8px;color:#fff;font-size:11px;cursor:pointer"><i class="fas fa-copy"></i> نسخ الكود</button>
       </div>
       <div style="margin-top:8px;padding:12px;background:var(--amber-l);border:1.5px solid var(--amber-m);border-radius:var(--r);text-align:right">
         <div style="font-size:11px;color:var(--text3);margin-bottom:6px">🔐 الأمان</div>
@@ -2327,6 +2407,12 @@ const renderSProfile=()=>{
       <button class="ba" onclick="saveSProf()"><i class="fas fa-save"></i> حفظ التعديلات</button>
     </div>
   </div>`;
+};
+
+// إضافة دالة نسخ الكود
+window.copyInviteCode = (code) => {
+  navigator.clipboard.writeText(code);
+  toast('ok', '✅ تم نسخ الكود', 'يمكنك مشاركته مع السائقين');
 };
 window.saveSProf=async()=>{
   const nm=($('sp-nm').value||'').trim(),pw=$('sp-pw').value||'';
