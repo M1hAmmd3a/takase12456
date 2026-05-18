@@ -129,11 +129,11 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
 .panel{padding:20px;overflow-y:auto;height:calc(100vh - 60px)}
 
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--bg);border-top:1px solid var(--border);box-shadow:0 -2px 10px rgba(0,0,0,.06);padding:6px 4px calc(8px + env(safe-area-inset-bottom))}
-.mobile-nav .mob-tabs{display:flex;justify-content:space-around;align-items:flex-end;gap:2px}
-.mob-tab{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border:none;background:transparent;color:var(--text4);font-family:'Cairo',sans-serif;font-size:10px;font-weight:700;cursor:pointer;border-radius:10px;transition:var(--tr);flex:1;position:relative;min-width:0}
+.mobile-nav .mob-tabs{display:flex;justify-content:space-around;align-items:flex-end;gap:0px}
+.mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;}
 .mob-tab.on{color:var(--primary);background:var(--primary-l)}
 .mob-tab.sup-on{color:var(--amber);background:var(--amber-l)}
-.mob-tab i{font-size:18px}
+.mob-tab i{font-size:17px}
 .mob-tab-badge{position:absolute;top:3px;right:10px;background:var(--red);color:#fff;font-size:8px;font-weight:800;padding:1px 4px;border-radius:6px;min-width:14px;text-align:center}
 
 /* ── DRIVER LAYOUT ── */
@@ -400,6 +400,9 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
 @media(min-width:641px) and (max-width:900px){
   .dside{width:210px}.sup-req-col{width:290px}
 }
+#driverMap .leaflet-control-container{z-index:2!important}
+#driverMap{z-index:1}
+.ststrip{position:relative;z-index:2}
 </style>
 </head>
 <body>
@@ -753,12 +756,18 @@ const TENANT_MAP_H={
   '4741ec93bb4278b70b6be756cd6ead5400e6cb977b4d5723174708bd3206f4b1':{name:'مكتب طولكرم 5',adminPwH:'486abc10319a5faca753324f486ba67d44fc4002ddae99caae1de685d97a8257',inviteH:'5b56330e496f9c9bd592c182ab85af6d2c07bc10622ff28c18ea5f1de519a901'},
   'bf9a83c04383084f6bcec5bb86440c2b3cfbbf6122379ce9d35d3a5cb36d3371':{name:'مكتب طولكرم 6',adminPwH:'c4282ba0020765a9cf1b11a265318382ea6cb1dacb3bf6e7027f8185d7a18203',inviteH:'116073a9350cb698ce2e2f3a2ef95decdf8792be5cef2fd912442b0696ddee90'},
 };
-const findTenantByCode=async code=>{
-  if(!code)return null;
-  const h=await _h(code.toLowerCase().trim());
-  const info=TENANT_MAP_H[h];
-  if(!info)return null;
-  return{codeHash:h,...info};
+const findTenantByCode = async code => {
+  if (!code) return null;
+
+  const h = await _h(code.toLowerCase().trim());
+  const info = TENANT_MAP_H[h];
+
+  if (!info || typeof info !== "object") return null;
+
+  return {
+    codeHash: h,
+    ...info
+  };
 };
 
 /* ═══════════════════════════════════════════════════════
@@ -825,7 +834,7 @@ const sendGPS = async (drvId, lat, lng, isFirst) => {
     lat, lng, locUpdated: Date.now()
   }).catch(() => {});
   if (isFirst) toast('ok', '📍 موقعك محدّد', 'يظهر على الخريطة');
-};
+}; 
 
 const stopGPS = () => {
   if (_gpsWatcher !== null) {
@@ -1900,14 +1909,14 @@ window.confirmTaxiSel=async()=>{
    FULL MAP (supervisor)
    ═══════════════════════════════════════════════════════ */
 const renderMapSup=()=>{
-  $('dbody').innerHTML=`<div style="height:calc(100vh - 60px - 70px);display:flex;flex-direction:column;position:relative">
+  $('dbody').innerHTML=`<div style="height:calc(100vh - 60px - 70px);display:flex;flex-direction:column;position:relative;overflow:hidden">
     <div class="ststrip" style="flex-shrink:0">
       <div class="st"><div class="stic" style="background:var(--green-l)"><i class="fas fa-circle" style="color:var(--green)"></i></div><div><div class="stv" id="mG">0</div><div class="stl">متاح 🟢</div></div></div>
       <div class="st"><div class="stic" style="background:var(--orange-l)"><i class="fas fa-hourglass-half" style="color:var(--orange)"></i></div><div><div class="stv" id="mO">0</div><div class="stl">استراحة 🟠</div></div></div>
       <div class="st"><div class="stic" style="background:var(--red-l)"><i class="fas fa-car" style="color:var(--red)"></i></div><div><div class="stv" id="mR">0</div><div class="stl">مشغول 🔴</div></div></div>
       <div class="st"><div class="stic" style="background:var(--bg3)"><i class="fas fa-users" style="color:var(--text3)"></i></div><div><div class="stv" id="mTot">0</div><div class="stl">المجموع</div></div></div>
     </div>
-    <div id="driverMap" style="flex:1;min-height:0"></div>
+    <div id="driverMap" style="flex:1;min-height:0;position:relative;z-index:1"></div>
     <div class="map-legend">
       <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">🚕 حالات السائقين</div>
       <div class="map-legend-item"><div class="leg-dot" style="background:#059669"></div>متاح 🟢</div>
@@ -2544,14 +2553,14 @@ window.recvEditReq=(id,phone,details)=>{
 const renderRecvMap=body=>{
   body.innerHTML=`
   <div style="height:calc(100vh - 60px - 70px);display:flex;flex-direction:column;position:relative">
-    <div class="ststrip" style="flex-shrink:0">
+    <div class="ststrip" style="flex-shrink:0;position:relative;z-index:2">
       <div class="st"><div class="stic" style="background:var(--green-l)"><i class="fas fa-circle" style="color:var(--green)"></i></div><div><div class="stv" id="rmG">0</div><div class="stl">متاح 🟢</div></div></div>
       <div class="st"><div class="stic" style="background:var(--red-l)"><i class="fas fa-car" style="color:var(--red)"></i></div><div><div class="stv" id="rmR">0</div><div class="stl">مشغول 🔴</div></div></div>
       <div class="st"><div class="stic" style="background:var(--orange-l)"><i class="fas fa-hourglass-half" style="color:var(--orange)"></i></div><div><div class="stv" id="rmO">0</div><div class="stl">استراحة 🟠</div></div></div>
       <div class="st"><div class="stic" style="background:var(--primary-l)"><i class="fas fa-users" style="color:var(--primary)"></i></div><div><div class="stv" id="rmT">0</div><div class="stl">المجموع</div></div></div>
     </div>
     <div id="recvMap" style="flex:1;min-height:0"></div>
-    <div class="map-legend">
+    <div class="map-legend" style="z-index:2">
       <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">حالات السائقين</div>
       <div class="map-legend-item"><div class="leg-dot" style="background:#059669"></div>متاح 🟢</div>
       <div class="map-legend-item"><div class="leg-dot" style="background:#EA580C"></div>استراحة 🟠</div>
