@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
 <title>منصة التكسي — طولكرم</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -813,13 +809,33 @@ const _h=async s=>{
    TENANT MAP — هاشات SHA-256 فقط، لا كلمات مرور، لا أكواد نصية
    ═══════════════════════════════════════════════════════════ */
 const TENANT_MAP_H={
-  '85337816d263d362acb23a4255a636191075c2a90c47f2ee6db3362f7df11203':{name:'مكتب طولكرم 1',adminPwH:'a8969a0ab077f0514d6bd965c8dcc64dd56c4f811f72eeac8bf53d68e1a35be7',inviteH:'6a06097c0b08920cf06e6f9a5f8948285d6781ca8a0ca66a3162428f76b869ae',inviteCode:'DRV-TLK1-2024'},
-  'a29c9f577f2a3a51aa369c448b008eeff2675d10bf8a59dd9dbde6e80c742a9a':{name:'مكتب طولكرم 2',adminPwH:'1aa02d981ece259e3ecda022a4b14e217678de82fddce412ffdc65d808bb4248',inviteH:'1ab5b47f2dc35a43ebc065a23438b6d56e05cf87faae17d15dbf682fc31ba121',inviteCode:'DRV-TLK2-2024'},
-  '87cdd830c3734aaf221ee0bf490375ed7e0e79fb12fd53c41e015e07284009df':{name:'مكتب طولكرم 3',adminPwH:'528d867a425af9c41bfea253360fe5b5f165c5a321a7f548dfa0dc55b8a73ba3',inviteH:'41e5ead143651a65f9c777eeb45b4468143a0476be60412343a0b7245dc02602',inviteCode:'DRV-TLK3-2024'},
-  '293c9b8d72684cf345205b0c0451f6d652b3dc7cfe1a4b4b926af296fbb85982':{name:'مكتب طولكرم 4',adminPwH:'4112c44e57669c0237d91f34196442b64e2d8d9afe47e7d750b62b7c5aa108c7',inviteH:'208a43370323aaab8d4271dcf5d8a9c448851a722659387945c00913ab281a9f',inviteCode:'DRV-TLK4-2024'},
-  '4741ec93bb4278b70b6be756cd6ead5400e6cb977b4d5723174708bd3206f4b1':{name:'مكتب طولكرم 5',adminPwH:'486abc10319a5faca753324f486ba67d44fc4002ddae99caae1de685d97a8257',inviteH:'5b56330e496f9c9bd592c182ab85af6d2c07bc10622ff28c18ea5f1de519a901',inviteCode:'DRV-TLK5-2024'},
-  'bf9a83c04383084f6bcec5bb86440c2b3cfbbf6122379ce9d35d3a5cb36d3371':{name:'مكتب طولكرم 6',adminPwH:'c4282ba0020765a9cf1b11a265318382ea6cb1dacb3bf6e7027f8185d7a18203',inviteH:'116073a9350cb698ce2e2f3a2ef95decdf8792be5cef2fd912442b0696ddee90',inviteCode:'DRV-TLK6-2024'},
-};const findTenantByCode = async code => {
+  '234ce4b6d65413fada8929e7d973cd1091539bcdc8152e64f7aa7baa7a0dc66e':{name:'مكتب طولكرم 1',adminPwH:'93e603b421ec7b07237128b60ab19b05023adf9bad0b50a50867e50630962d71',inviteH:'41b5a1cf8e3cf33cb39fc63df65288121a97ab1e0b0a4b0a07409f82e1dd6fea',inviteCode:'INV-TLK1-X9M7Q3R!'},
+  '911569e2fa356351e2d9b3a25cb42a2d4d0796050a62336080a6e9c95444ff8a':{name:'مكتب طولكرم 2',adminPwH:'cee17aeef7e7de002275ac2c6997e810bc29a716ce1619b9875c3d031f6bb2a4',inviteH:'236b165cda1d865812f715fb959f2df8933e1b5c2d32e57c81fd85c5565bd235',inviteCode:'INV-TLK2-P5W8N2K!'},
+  'f8fd356b5965ff7dfa058c17fb50c16db07bfc8ac1a383ffa1fa495db291ffaf':{name:'مكتب طولكرم 3',adminPwH:'4c3a7eb5a63ff27660d6e42789a2ce42b2fb94a67c4c88eeb8bb4ddee5cd0db2',inviteH:'7aebdcb508c2a58ff7a834e035412904dbf21259a18043075af78e498153afba',inviteCode:'INV-TLK3-H4B6V1Q!'},
+  'd4e074a4c08a8dadf1b3adc029d8baf49d4fe0834bed98777e0ca930e69fb39a':{name:'مكتب طولكرم 4',adminPwH:'975847563a79059abdd4e7be35f2d99d9fc345b60ef670f30d0d114e6a4c53e6',inviteH:'5dde38c810d7480f338080efc6f5f7732c7a5b4b1ac61d98f4e583b9333f650b',inviteCode:'INV-TLK4-W2Z9S5Y!'},
+  '07db9e8a5aa951204e4c7b3e5cced3352f3e90b476695faeb6be32f48f70b4aa':{name:'مكتب طولكرم 5',adminPwH:'7d910310621323a044354648a9871b38fbea47375ead7e2c304e6aabd473e060',inviteH:'c7a4981e136fd7ddce79616a2a13764989add27e940ecd10a311f404cae8a7f8',inviteCode:'INV-TLK5-F7X3K8U!'},
+  '1c36fb1f96d1bbfc8007ae2e160b19da27b966e52482592b0f155ec7ee1aeacf':{name:'مكتب طولكرم 6',adminPwH:'017e65103639547d8b66c615b5de32650256d50503b9ea5f86ce55537319ee2b',inviteH:'be150b6ce200d506050154c609a3b4acd8b6eecc87d1c2650d82ecbfc274ba51',inviteCode:'INV-TLK6-R1J4A6O!'},
+  '645581a71573c3e47cf26f7f3c248a4158d0c15496df7663920c544a8f9bbacd':{name:'مكتب طولكرم 7',adminPwH:'088b894a1fa12db8c466c75491d8e5c76029f0c9815b4b71915e4b4bd3c52018',inviteH:'8bc562f21b6287d74e5a34306f4d85141baf1581145b82aa855ba5280d5cea64',inviteCode:'INV-TLK7-C8T2E9I!'},
+  '7ff8b69dfe59f0949ca95d5ccb52fb0cf10e799bd67a7acd674ca593da3dbc29':{name:'مكتب طولكرم 8',adminPwH:'6c766d64f5029238afb2e82c1add23fea4f17033d3760caeacfc8551c07b913e',inviteH:'e9b50853571407cce820b94ea3ef4dbf4ac38dbe47170640f8a94ab8498fd281',inviteCode:'INV-TLK8-G3N7D4A!'},
+  '2f5a8235e2ca1d2bf62668f88b72dd2abfbea1cbfc2ce07eca8dcd2b7ee9f10b':{name:'مكتب طولكرم 9',adminPwH:'b3fb2a8f0b968c09be66216d0e334f5d1f21bc9ecb964f9b100dfca37adc5016',inviteH:'9d3b07a17b1e76af0fbcb3049323aee16b2d803c34005dd49d3ba0d59330315a',inviteCode:'INV-TLK9-L6S1Z8E!'},
+  'dbce4af8a3b2af87a0785acb1e5dce6c7c71ae9da7073d2db4badd4024631d3c':{name:'مكتب طولكرم 10',adminPwH:'852eb9ab37277542d01ced7762a94cc08d1f4863259cf659a3631ad9baa4566b',inviteH:'daf36c740b4d491d697bed9c26af3595ed8d6d597e199c75cac6e57fb9952c20',inviteCode:'INV-TLK10-M5Y3J7F!'},
+  '5ca3530573bd34139beaf1999f9fc7b61c7363076731dda902bfbf64cf177dd0':{name:'مكتب طولكرم 11',adminPwH:'14ea8bdf32dd9ddd744c5d69e2546e302ebd375fcb7ccf1586c37a4ee3b5fa87',inviteH:'d928dd2b8f800b96e2e2fc8e0c9eb134683c6bb351400dea130cf35cea92d861',inviteCode:'INV-TLK11-B9U6K2W!'},
+  '7102aae53ff240b06410116f4797c53a00ad8a5834aad309f14c9caf19e083e9':{name:'مكتب طولكرم 12',adminPwH:'2435cae14976a3439905111d76b8012e23b39221a9e904fa07f28190973463d0',inviteH:'e47b3092da27146b47f125b70f8abd68592d8a3cf460fc6a2ec7e236936863a0',inviteCode:'INV-TLK12-Q4O8T5D!'},
+  'e6c617035bf455f9581b8bc68228422d296d43bccdb3a8016704e21983466b7e':{name:'مكتب طولكرم 13',adminPwH:'0e85e555ca2e84c14268a91f85c93c89110d54b83b878bc76171469a5eb692dc',inviteH:'08e22034e78fa30eb1cca504d38f8cb544022f516e996cf56b3fe8ecd589e7f1',inviteCode:'INV-TLK13-V7H2S1N!'},
+  'dcffef77a26504f304d7a8185c200f5316d4ad73f4d9bd054027d85802e1193e':{name:'مكتب طولكرم 14',adminPwH:'e2b0a862f8f1c2ac51dc9d0019bbf420886f4b837828bace2af5e7bae37e0a39',inviteH:'dda80e7fcb953f7de51ee99ab4b837f92c48b5f509b9a979eb067310e5eff1d5',inviteCode:'INV-TLK14-Y1C5R9G!'},
+  'beabcaa4e253e64b2f57ec8286b931ea08df8c48e29518e00a7c59fc07337023':{name:'مكتب طولكرم 15',adminPwH:'c0a8d0643a5838281f692bb937ffd85a0a7c0f7cd46ea3864e75ffc52d09ab40',inviteH:'a41254a2377213c173b81be8c48b1a82b3eac9fe889d846f9ed0ebf920c4afe1',inviteCode:'INV-TLK15-D6V3W4M!'},
+  '538ef16f810de811455f3ff5a3bc69f0a8ab58411e364a99b7d227baf8debd81':{name:'مكتب طولكرم 16',adminPwH:'29476d888e4f742150477904e4fdc823c39ef70ea48e8590a3165acbdf168920',inviteH:'dfa4e5284ad1d60c7bfd07378e906a1ecdb9bca7eb48f7ea9cc8c614bb9c39bf',inviteCode:'INV-TLK16-K2I7U8B!'},
+  '6c81427800940408a9ff42ae96416ab6bd2d36e443a937653548e629590cba56':{name:'مكتب طولكرم 17',adminPwH:'c724a45cac6f22a3d332ade22a90867bc966a3f23276665d941a38d0b1865470',inviteH:'82d682e397db058dae2486f16aa8c22ae373460f2c29566833264ad7c62fa3aa',inviteCode:'INV-TLK17-N8Q4X3T!'},
+  '769a312a5d2f97373832c33b08f43ec050ce4520c1852769f29836f448d416d4':{name:'مكتب طولكرم 18',adminPwH:'e394027ea933c2aaf3005679cddef2d14f3c4ec01a9786b0309a606ec1d49b99',inviteH:'e0edb8c992c4b1a18da132e54bf4d9c87db2a4a5c6f0aeaab992584592179f41',inviteCode:'INV-TLK18-Z5F9H6U!'},
+  'bfdccfa6820a3852b5e8a4be9405e7707b2d627d4866eb1594a92e7dd0f3b54c':{name:'مكتب طولكرم 19',adminPwH:'32d05f3a257c357dce4afe42a671d67ea05358e83dd56ef9fdeec05d7acefb90',inviteH:'03004866d5c262da4f57b221a3dd2ea40444fd19dcc88f537b3f74cac43335b9',inviteCode:'INV-TLK19-E3P1M7V!'},
+  '05e62bd4ba5c123cbb473ce67bb137e2b3773e7c5d1478a9e2f1f6e8612ad156':{name:'مكتب طولكرم 20',adminPwH:'e5e1144cee83e32e269c6656587bf6a415206c8131ad5e7c012ddb5e5032e545',inviteH:'b810b2a7e55a868ec58b28e0857133a763875fc1b3b18253fbaacdad6b75a2ff',inviteCode:'INV-TLK20-I7W5G2K!'},
+  'f820cec8f573452db5a29816cf99cfb26f98998c7def27e7838293eeccf25f9e':{name:'مكتب طولكرم 21',adminPwH:'14efd16ed7534ed55092ea06371768985e9bace9d5313aaa2b47a06d1630b12b',inviteH:'6eade9df0a2159c5df2f04a28b0f6fe151308cb11a61d4f20cbf1eb0976e721e',inviteCode:'INV-TLK21-T4L8N6R!'},
+  '6be9da102c2a10a1efc2250f2ab656ee940731af76e3d993b460e93da95f7b20':{name:'مكتب طولكرم 22',adminPwH:'38967203928f21f89c506479493ad0ea0511acf9b07c98681a097f7785138115',inviteH:'9a537bc2f3b406d686b06ad7e07c27904cf2cdf7cc457179807b003a998123a0',inviteCode:'INV-TLK22-S9Z2B4H!'},
+  '519e469e2074298608eee9869f7b2cfd7ec9750505d9b0d75e15f5a0d5bd499f':{name:'مكتب طولكرم 23',adminPwH:'356a4eb44c85c992d136ddd9fe4cb79e1d0c676fb8dc647763d44781324c604f',inviteH:'57e3698f89fcecdae7cce0538283f256be11992c46b1d9859c7e6b9fc09db884',inviteCode:'INV-TLK23-A1M6V8P!'},
+  '7c746cd9bd65c4fa64b8cfc6cafe6e590b5e4099a41c644fbaaf2ac0ea9d95a2':{name:'مكتب طولكرم 24',adminPwH:'524c2b4679959dbed1cddf1fdae95ba77f30466fbe26dcc4b259321a7b296e0f',inviteH:'fe9cf94fe0cc54a16a028518b3c28861381d87041a867a507e8e341f91b13139',inviteCode:'INV-TLK24-J3E7W5Q!'},
+  '05fd262c091addfc7ee1ae88f273b17f35a11c105b1102994d8c5257cd908b3c':{name:'مكتب طولكرم 25',adminPwH:'ab0c5dcce6a32764eac7323d3be6a8862a232dfbb73ed3254d21a89ce244f1ec',inviteH:'adf22f2e4b99b9ec742dc508c9bd916e63ba8add29e6c82cc7bad0061ee7ab0b',inviteCode:'INV-TLK25-O6K4R9Z!'},
+};
+  const findTenantByCode = async code => {
   if (!code) return null;
 
   const h = await _h(code.toLowerCase().trim());
