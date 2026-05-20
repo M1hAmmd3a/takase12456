@@ -130,11 +130,29 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
 
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--bg);border-top:1px solid var(--border);box-shadow:0 -2px 10px rgba(0,0,0,.06);padding:6px 4px calc(8px + env(safe-area-inset-bottom))}
 .mobile-nav .mob-tabs{display:flex;justify-content:space-around;align-items:flex-end;gap:0px}
-.mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;}
-.mob-tab.on{color:var(--primary);background:var(--primary-l)}
-.mob-tab.sup-on{color:var(--amber);background:var(--amber-l)}
-.mob-tab i{font-size:17px}
-.mob-tab-badge{position:absolute;top:3px;right:10px;background:var(--red);color:#fff;font-size:8px;font-weight:800;padding:1px 4px;border-radius:6px;min-width:14px;text-align:center}
+.mob-tab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:6px 8px;border-radius:12px;cursor:pointer;
+  font-size:10px;font-weight:700;color:var(--text3);
+  min-width:52px;flex:1;position:relative;transition:var(--tr);
+  border:none;background:transparent;font-family:'Cairo',sans-serif;
+}
+.mob-tab:hover{background:var(--bg3);color:var(--text2)}
+.mob-tab.on{color:var(--primary);background:var(--primary-l);border-radius:12px}
+.mob-tab.sup-on{color:var(--amber);background:var(--amber-l);border-radius:12px}
+.mob-tab i{font-size:19px;display:block}
+.mob-tab span.mob-label{font-size:9.5px;font-weight:700;white-space:nowrap;margin-top:1px}
+.mob-tab-badge{position:absolute;top:2px;right:6px;background:var(--red);color:#fff;font-size:8px;font-weight:800;padding:1px 4px;border-radius:6px;min-width:14px;text-align:center}
+
+.mobile-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--bg);border-top:1px solid var(--border);
+  box-shadow:0 -4px 16px rgba(0,0,0,.08);
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+}
+.mobile-nav .mob-tabs{
+  display:flex;justify-content:space-around;align-items:stretch;gap:2px;
+}
 
 /* ── DRIVER LAYOUT ── */
 .dlayout{display:flex;height:calc(100vh - 60px)}
@@ -385,30 +403,61 @@ html,body{height:100%;font-family:'Cairo',sans-serif;direction:rtl}
 .gps-mid{background:var(--amber-l);color:var(--amber);border:1px solid var(--amber-m)}
 
 @media(max-width:640px){
-  .dlayout,.sup-req-layout{flex-direction:column;height:auto;min-height:calc(100vh - 60px)}
-  .dside{width:100%;flex:0 0 auto;max-height:35vh;border-left:none;border-bottom:1px solid var(--border);overflow-y:auto}
-  .sup-req-col{width:100%;max-height:none;border-left:none;border-bottom:1px solid var(--border);margin-bottom:10px}
-  .col-scroll{max-height:35vh;overflow-y:auto}
-  .sup-req-main{min-height:auto}
-  .ststrip{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:6px;padding:8px 12px}
-  .st{flex-shrink:0;padding:6px 10px}
-  .stv{font-size:14px}
+  /* تخطيط عام */
+  .dlayout,.sup-req-layout{flex-direction:column;height:auto;min-height:calc(100vh - 60px - 70px)}
+  .dside{width:100%;flex:0 0 auto;max-height:none;border-left:none;border-bottom:1px solid var(--border);overflow-y:auto}
+  
+  /* تخطيط المشرف — كل شيء في عمود واحد قابل للتمرير */
+  .sup-req-layout{display:flex;flex-direction:column;overflow-y:auto;height:calc(100vh - 60px - 70px)}
+  .sup-req-col{width:100%;flex-shrink:0;border-left:none;border-bottom:1px solid var(--border)}
+  .col-scroll{max-height:320px;overflow-y:auto}
+  .sup-req-main{flex:1;overflow:visible;min-height:0}
+  .sup-req-main > .ststrip{position:sticky;top:0;z-index:10;background:var(--bg)}
+  
+  /* الشريط الإحصائي */
+  .ststrip{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:5px;padding:6px 10px;scrollbar-width:none}
+  .ststrip::-webkit-scrollbar{display:none}
+  .st{flex-shrink:0;padding:6px 9px;gap:5px}
+  .stic{width:24px;height:24px;font-size:11px}
+  .stv{font-size:13px}
   .stl{font-size:8px}
+  
+  /* الخريطة المصغرة */
+  #reqMapInline{height:160px!important}
+  .map-legend{bottom:5px;right:5px;padding:5px 8px;font-size:9px}
+  .map-legend-item{font-size:9px;margin-bottom:3px}
+  
+  /* القوائم */
   .ntabs{display:none}
   .bout{display:none}
   .mobile-nav{display:block}
+  
+  /* الارتفاعات */
   .dbody{padding-top:60px;padding-bottom:70px}
-  .panel,.ptab{height:calc(100vh - 60px - 70px);padding:12px}
+  .panel,.ptab{height:calc(100vh - 60px - 70px);padding:12px;overflow-y:auto}
   .dreq-wrap{height:calc(100vh - 60px - 70px)}
+  
+  /* الشبكات */
   .acc-grid,.support-grid{grid-template-columns:1fr}
   .monitor-grid{grid-template-columns:1fr 1fr}
-  #reqMapInline{height:180px!important}
-  .map-legend{bottom:5px;right:5px;padding:5px 8px;font-size:9px}
-  .map-legend-item{font-size:9px;margin-bottom:3px}
-  .reqcard{padding:12px}
+  
+  /* بطاقات الطلبات */
+  .reqcard{padding:10px}
   .reqphone{font-size:13px}
+  .rca{padding:7px 10px;font-size:11px}
+  
+  /* أزرار السائق السريعة */
   .qbtn{padding:8px 5px;font-size:10px}
   .qbtn i{font-size:14px}
+  
+  /* رأس العمود */
+  .col-hd{padding:10px 12px;flex-wrap:wrap;gap:6px}
+  .col-hd-title{font-size:13px}
+  
+  /* بطاقة الملف الشخصي للسائق */
+  .pcard{padding:12px;margin:8px}
+  .ssec{padding:8px 10px}
+  .qbtns{gap:5px}
 }
 @media(min-width:641px) and (max-width:900px){
   .dside{width:210px}.sup-req-col{width:290px}
@@ -764,15 +813,33 @@ const _h=async s=>{
    TENANT MAP — هاشات SHA-256 فقط، لا كلمات مرور، لا أكواد نصية
    ═══════════════════════════════════════════════════════════ */
 const TENANT_MAP_H={
-  // officeCodeHash => { name, adminPwH, inviteH }
-  '85337816d263d362acb23a4255a636191075c2a90c47f2ee6db3362f7df11203':{name:'مكتب طولكرم 1',adminPwH:'a8969a0ab077f0514d6bd965c8dcc64dd56c4f811f72eeac8bf53d68e1a35be7',inviteH:'6a06097c0b08920cf06e6f9a5f8948285d6781ca8a0ca66a3162428f76b869ae'},
-  'a29c9f577f2a3a51aa369c448b008eeff2675d10bf8a59dd9dbde6e80c742a9a':{name:'مكتب طولكرم 2',adminPwH:'1aa02d981ece259e3ecda022a4b14e217678de82fddce412ffdc65d808bb4248',inviteH:'1ab5b47f2dc35a43ebc065a23438b6d56e05cf87faae17d15dbf682fc31ba121'},
-  '87cdd830c3734aaf221ee0bf490375ed7e0e79fb12fd53c41e015e07284009df':{name:'مكتب طولكرم 3',adminPwH:'528d867a425af9c41bfea253360fe5b5f165c5a321a7f548dfa0dc55b8a73ba3',inviteH:'41e5ead143651a65f9c777eeb45b4468143a0476be60412343a0b7245dc02602'},
-  '293c9b8d72684cf345205b0c0451f6d652b3dc7cfe1a4b4b926af296fbb85982':{name:'مكتب طولكرم 4',adminPwH:'4112c44e57669c0237d91f34196442b64e2d8d9afe47e7d750b62b7c5aa108c7',inviteH:'208a43370323aaab8d4271dcf5d8a9c448851a722659387945c00913ab281a9f'},
-  '4741ec93bb4278b70b6be756cd6ead5400e6cb977b4d5723174708bd3206f4b1':{name:'مكتب طولكرم 5',adminPwH:'486abc10319a5faca753324f486ba67d44fc4002ddae99caae1de685d97a8257',inviteH:'5b56330e496f9c9bd592c182ab85af6d2c07bc10622ff28c18ea5f1de519a901'},
-  'bf9a83c04383084f6bcec5bb86440c2b3cfbbf6122379ce9d35d3a5cb36d3371':{name:'مكتب طولكرم 6',adminPwH:'c4282ba0020765a9cf1b11a265318382ea6cb1dacb3bf6e7027f8185d7a18203',inviteH:'116073a9350cb698ce2e2f3a2ef95decdf8792be5cef2fd912442b0696ddee90'},
+  '234ce4b6d65413fada8929e7d973cd1091539bcdc8152e64f7aa7baa7a0dc66e':{name:'مكتب طولكرم 1',adminPwH:'93e603b421ec7b07237128b60ab19b05023adf9bad0b50a50867e50630962d71',inviteH:'41b5a1cf8e3cf33cb39fc63df65288121a97ab1e0b0a4b0a07409f82e1dd6fea',inviteCode:''},
+  '911569e2fa356351e2d9b3a25cb42a2d4d0796050a62336080a6e9c95444ff8a':{name:'مكتب طولكرم 2',adminPwH:'cee17aeef7e7de002275ac2c6997e810bc29a716ce1619b9875c3d031f6bb2a4',inviteH:'236b165cda1d865812f715fb959f2df8933e1b5c2d32e57c81fd85c5565bd235',inviteCode:''},
+  'f8fd356b5965ff7dfa058c17fb50c16db07bfc8ac1a383ffa1fa495db291ffaf':{name:'مكتب طولكرم 3',adminPwH:'4c3a7eb5a63ff27660d6e42789a2ce42b2fb94a67c4c88eeb8bb4ddee5cd0db2',inviteH:'7aebdcb508c2a58ff7a834e035412904dbf21259a18043075af78e498153afba',inviteCode:''},
+  'd4e074a4c08a8dadf1b3adc029d8baf49d4fe0834bed98777e0ca930e69fb39a':{name:'مكتب طولكرم 4',adminPwH:'975847563a79059abdd4e7be35f2d99d9fc345b60ef670f30d0d114e6a4c53e6',inviteH:'5dde38c810d7480f338080efc6f5f7732c7a5b4b1ac61d98f4e583b9333f650b',inviteCode:''},
+  '07db9e8a5aa951204e4c7b3e5cced3352f3e90b476695faeb6be32f48f70b4aa':{name:'مكتب طولكرم 5',adminPwH:'7d910310621323a044354648a9871b38fbea47375ead7e2c304e6aabd473e060',inviteH:'c7a4981e136fd7ddce79616a2a13764989add27e940ecd10a311f404cae8a7f8',inviteCode:''},
+  '1c36fb1f96d1bbfc8007ae2e160b19da27b966e52482592b0f155ec7ee1aeacf':{name:'مكتب طولكرم 6',adminPwH:'017e65103639547d8b66c615b5de32650256d50503b9ea5f86ce55537319ee2b',inviteH:'be150b6ce200d506050154c609a3b4acd8b6eecc87d1c2650d82ecbfc274ba51',inviteCode:''},
+  '645581a71573c3e47cf26f7f3c248a4158d0c15496df7663920c544a8f9bbacd':{name:'مكتب طولكرم 7',adminPwH:'088b894a1fa12db8c466c75491d8e5c76029f0c9815b4b71915e4b4bd3c52018',inviteH:'8bc562f21b6287d74e5a34306f4d85141baf1581145b82aa855ba5280d5cea64',inviteCode:''},
+  '7ff8b69dfe59f0949ca95d5ccb52fb0cf10e799bd67a7acd674ca593da3dbc29':{name:'مكتب طولكرم 8',adminPwH:'6c766d64f5029238afb2e82c1add23fea4f17033d3760caeacfc8551c07b913e',inviteH:'e9b50853571407cce820b94ea3ef4dbf4ac38dbe47170640f8a94ab8498fd281',inviteCode:''},
+  '2f5a8235e2ca1d2bf62668f88b72dd2abfbea1cbfc2ce07eca8dcd2b7ee9f10b':{name:'مكتب طولكرم 9',adminPwH:'b3fb2a8f0b968c09be66216d0e334f5d1f21bc9ecb964f9b100dfca37adc5016',inviteH:'9d3b07a17b1e76af0fbcb3049323aee16b2d803c34005dd49d3ba0d59330315a',inviteCode:''},
+  'dbce4af8a3b2af87a0785acb1e5dce6c7c71ae9da7073d2db4badd4024631d3c':{name:'مكتب طولكرم 10',adminPwH:'852eb9ab37277542d01ced7762a94cc08d1f4863259cf659a3631ad9baa4566b',inviteH:'daf36c740b4d491d697bed9c26af3595ed8d6d597e199c75cac6e57fb9952c20',inviteCode:''},
+  '5ca3530573bd34139beaf1999f9fc7b61c7363076731dda902bfbf64cf177dd0':{name:'مكتب طولكرم 11',adminPwH:'14ea8bdf32dd9ddd744c5d69e2546e302ebd375fcb7ccf1586c37a4ee3b5fa87',inviteH:'d928dd2b8f800b96e2e2fc8e0c9eb134683c6bb351400dea130cf35cea92d861',inviteCode:''},
+  '7102aae53ff240b06410116f4797c53a00ad8a5834aad309f14c9caf19e083e9':{name:'مكتب طولكرم 12',adminPwH:'2435cae14976a3439905111d76b8012e23b39221a9e904fa07f28190973463d0',inviteH:'e47b3092da27146b47f125b70f8abd68592d8a3cf460fc6a2ec7e236936863a0',inviteCode:''},
+  'e6c617035bf455f9581b8bc68228422d296d43bccdb3a8016704e21983466b7e':{name:'مكتب طولكرم 13',adminPwH:'0e85e555ca2e84c14268a91f85c93c89110d54b83b878bc76171469a5eb692dc',inviteH:'08e22034e78fa30eb1cca504d38f8cb544022f516e996cf56b3fe8ecd589e7f1',inviteCode:''},
+  'dcffef77a26504f304d7a8185c200f5316d4ad73f4d9bd054027d85802e1193e':{name:'مكتب طولكرم 14',adminPwH:'e2b0a862f8f1c2ac51dc9d0019bbf420886f4b837828bace2af5e7bae37e0a39',inviteH:'dda80e7fcb953f7de51ee99ab4b837f92c48b5f509b9a979eb067310e5eff1d5',inviteCode:''},
+  'beabcaa4e253e64b2f57ec8286b931ea08df8c48e29518e00a7c59fc07337023':{name:'مكتب طولكرم 15',adminPwH:'c0a8d0643a5838281f692bb937ffd85a0a7c0f7cd46ea3864e75ffc52d09ab40',inviteH:'a41254a2377213c173b81be8c48b1a82b3eac9fe889d846f9ed0ebf920c4afe1',inviteCode:''},
+  '538ef16f810de811455f3ff5a3bc69f0a8ab58411e364a99b7d227baf8debd81':{name:'مكتب طولكرم 16',adminPwH:'29476d888e4f742150477904e4fdc823c39ef70ea48e8590a3165acbdf168920',inviteH:'dfa4e5284ad1d60c7bfd07378e906a1ecdb9bca7eb48f7ea9cc8c614bb9c39bf',inviteCode:''},
+  '6c81427800940408a9ff42ae96416ab6bd2d36e443a937653548e629590cba56':{name:'مكتب طولكرم 17',adminPwH:'c724a45cac6f22a3d332ade22a90867bc966a3f23276665d941a38d0b1865470',inviteH:'82d682e397db058dae2486f16aa8c22ae373460f2c29566833264ad7c62fa3aa',inviteCode:''},
+  '769a312a5d2f97373832c33b08f43ec050ce4520c1852769f29836f448d416d4':{name:'مكتب طولكرم 18',adminPwH:'e394027ea933c2aaf3005679cddef2d14f3c4ec01a9786b0309a606ec1d49b99',inviteH:'e0edb8c992c4b1a18da132e54bf4d9c87db2a4a5c6f0aeaab992584592179f41',inviteCode:''},
+  'bfdccfa6820a3852b5e8a4be9405e7707b2d627d4866eb1594a92e7dd0f3b54c':{name:'مكتب طولكرم 19',adminPwH:'32d05f3a257c357dce4afe42a671d67ea05358e83dd56ef9fdeec05d7acefb90',inviteH:'03004866d5c262da4f57b221a3dd2ea40444fd19dcc88f537b3f74cac43335b9',inviteCode:''},
+  '05e62bd4ba5c123cbb473ce67bb137e2b3773e7c5d1478a9e2f1f6e8612ad156':{name:'مكتب طولكرم 20',adminPwH:'e5e1144cee83e32e269c6656587bf6a415206c8131ad5e7c012ddb5e5032e545',inviteH:'b810b2a7e55a868ec58b28e0857133a763875fc1b3b18253fbaacdad6b75a2ff',inviteCode:''},
+  'f820cec8f573452db5a29816cf99cfb26f98998c7def27e7838293eeccf25f9e':{name:'مكتب طولكرم 21',adminPwH:'14efd16ed7534ed55092ea06371768985e9bace9d5313aaa2b47a06d1630b12b',inviteH:'6eade9df0a2159c5df2f04a28b0f6fe151308cb11a61d4f20cbf1eb0976e721e',inviteCode:''},
+  '6be9da102c2a10a1efc2250f2ab656ee940731af76e3d993b460e93da95f7b20':{name:'مكتب طولكرم 22',adminPwH:'38967203928f21f89c506479493ad0ea0511acf9b07c98681a097f7785138115',inviteH:'9a537bc2f3b406d686b06ad7e07c27904cf2cdf7cc457179807b003a998123a0',inviteCode:''},
+  '519e469e2074298608eee9869f7b2cfd7ec9750505d9b0d75e15f5a0d5bd499f':{name:'مكتب طولكرم 23',adminPwH:'356a4eb44c85c992d136ddd9fe4cb79e1d0c676fb8dc647763d44781324c604f',inviteH:'57e3698f89fcecdae7cce0538283f256be11992c46b1d9859c7e6b9fc09db884',inviteCode:''},
+  '7c746cd9bd65c4fa64b8cfc6cafe6e590b5e4099a41c644fbaaf2ac0ea9d95a2':{name:'مكتب طولكرم 24',adminPwH:'524c2b4679959dbed1cddf1fdae95ba77f30466fbe26dcc4b259321a7b296e0f',inviteH:'fe9cf94fe0cc54a16a028518b3c28861381d87041a867a507e8e341f91b13139',inviteCode:''},
+  '05fd262c091addfc7ee1ae88f273b17f35a11c105b1102994d8c5257cd908b3c':{name:'مكتب طولكرم 25',adminPwH:'ab0c5dcce6a32764eac7323d3be6a8862a232dfbb73ed3254d21a89ce244f1ec',inviteH:'adf22f2e4b99b9ec742dc508c9bd916e63ba8add29e6c82cc7bad0061ee7ab0b',inviteCode:''},
 };
-const findTenantByCode = async code => {
+  const findTenantByCode = async code => {
   if (!code) return null;
 
   const h = await _h(code.toLowerCase().trim());
@@ -780,8 +847,10 @@ const findTenantByCode = async code => {
 
   if (!info || typeof info !== "object") return null;
 
+  // حفظ الكود الأصلي للمشرف
   return {
     codeHash: h,
+    _inviteCode: info.inviteCode || `DRV-${code.toUpperCase()}-2024`,
     ...info
   };
 };
@@ -946,8 +1015,14 @@ const cleanNotifs = async () => {
         if (n.read || (n.ts||0) < cutoff) pu[`driverPushNotifs/${drvId}/${k}`] = null;
       });
     });
-    if (Object.keys(pu).length > 0) update(ref(_db, T('')), pu).catch(() => {});
-  }
+if (Object.keys(pu).length > 0) {
+      // بناء updates بمسارات كاملة من جذر الـ tenant
+      const fullUpdates = {};
+      Object.entries(pu).forEach(([path, val]) => {
+        fullUpdates[path] = val;
+      });
+      await update(tRef(''), fullUpdates).catch(() => {});
+    }  }
 };
 // تنظيف كل ساعة
 setInterval(() => { if (CR === 'supervisor') cleanNotifs(); }, 3600000);
@@ -1300,37 +1375,45 @@ const listenDriverPushNotifs=drvId=>{
 
 const listenDriverRequests = drvId => {
   const r = tRef(`driverRequests/${drvId}`);
-  let known = {};
+  // لا نستخدم known هنا - نعتمد على onValue بشكل كامل
   onValue(r, snap => {
     if (!snap.exists()) return;
     const all = snap.val();
     const curId = $('currentReqId').value;
-    
+
     // التحقق من إلغاء الطلب الحالي
-    if (curId && all[curId]?.status === 'cancelled') {
+    if (curId && all[curId] && all[curId].status === 'cancelled') {
       clearInterval(reqCountdownTimer);
       $('ReqNotif').classList.remove('on');
+      $('currentReqId').value = '';
       if (CU && (CU.taxiColor === 'red' || CU.status === 'busy')) {
         update(tRef(`drivers/${CU.id}`), { taxiColor: 'green', status: 'online', lastSeen: Date.now() }).catch(() => {});
         CU.taxiColor = 'green'; CU.status = 'online';
         const b = $('drvStatusBadge'); if (b) b.innerHTML = getStatusBadge(CU);
       }
       playSound('cancel'); toast('info', '🚫 تم إلغاء الطلب', 'أنت الآن متاح 🟢');
+      return;
     }
-    
-    Object.entries(all).forEach(([rid, rd]) => {
-      if (known[rid]) return; known[rid] = true;
-      
-      // ✅ التعديل: إزالة شرط rid !== curId
-      if (rd.status === 'pending' || rd.status === 'modified') {
-        // إذا كان هناك طلب مفتوح، أغلقه أولاً
-        if ($('ReqNotif').classList.contains('on')) {
-          clearInterval(reqCountdownTimer);
-          $('ReqNotif').classList.remove('on');
-        }
-        showDriverReq(rid, rd);
-      }
-    });
+
+    // ابحث عن أحدث طلب pending أو modified
+    const pending = Object.entries(all)
+      .filter(([, rd]) => rd.status === 'pending' || rd.status === 'modified')
+      .sort((a, b) => (b[1].ts || 0) - (a[1].ts || 0));
+
+    if (pending.length === 0) return;
+
+    const [rid, rd] = pending[0];
+
+    // لو نفس الطلب المفتوح حالياً ولم يتغير → لا تعيد العرض
+    if (curId === rid && $('ReqNotif').classList.contains('on') && rd.status === 'pending') return;
+
+    // أغلق أي إشعار سابق
+    if ($('ReqNotif').classList.contains('on')) {
+      clearInterval(reqCountdownTimer);
+      $('ReqNotif').classList.remove('on');
+    }
+
+    showDriverReq(rid, rd);
   });
   LSNRS.push({ r });
 };
@@ -1397,6 +1480,39 @@ window.submitReject=async()=>{
   $('ReqNotif').classList.remove('on');vibrate([100,50,100]);playSound('reject');toast('info','تم رفض الطلب','');
 };
 
+window.inlineAccept = async id => {
+  const snap = await get(tRef(`driverRequests/${CU.id}/${id}`)).catch(() => null);
+  if (!snap || !snap.exists()) return toast('warn', 'الطلب غير موجود', '');
+  const st = snap.val().status;
+  if (st === 'cancelled') return toast('warn', 'تم إلغاء هذا الطلب', '');
+  if (st !== 'pending' && st !== 'modified') return;
+  const ts = Date.now();
+  await update(tRef(`driverRequests/${CU.id}/${id}`), { status: 'accepted', acceptedAt: ts });
+  await update(tRef(`drivers/${CU.id}`), { taxiColor: 'red', status: 'busy' });
+  CU.taxiColor = 'red'; CU.status = 'busy';
+  if ($('currentReqId').value === id) {
+    clearInterval(reqCountdownTimer);
+    $('ReqNotif').classList.remove('on');
+    $('currentReqId').value = '';
+  }
+  await push(tRef('notifications'), { type: 'accept', driverId: CU.id, driverName: CU.name, reqId: id, msg: `✅ السائق ${CU.name} قبل الطلب`, ts, read: false });
+  vibrate([200]); playSound('accept'); toast('ok', 'تم قبول الطلب 🚕', '');
+  const b = $('drvStatusBadge'); if (b) b.innerHTML = getStatusBadge(CU);
+};
+
+window.inlineReject = async id => {
+  const reason = prompt('سبب الرفض (مطلوب):', '');
+  if (!reason || !reason.trim()) return toast('warn', 'يرجى كتابة سبب الرفض', '');
+  await update(tRef(`driverRequests/${CU.id}/${id}`), { status: 'rejected', rejectedAt: Date.now(), reason: reason.trim() });
+  if ($('currentReqId').value === id) {
+    clearInterval(reqCountdownTimer);
+    $('ReqNotif').classList.remove('on');
+    $('currentReqId').value = '';
+  }
+  await push(tRef('notifications'), { type: 'reject', driverId: CU.id, driverName: CU.name, reqId: id, reason: reason.trim(), msg: `❌ السائق ${CU.name} رفض — ${reason.trim()}`, ts: Date.now(), read: false });
+  vibrate([100, 50, 100]); playSound('reject'); toast('info', 'تم رفض الطلب', '');
+};
+
 const updStatus=async s=>{
   if(!CU)return;
   const cm={'online':'green','busy':'red','break':'orange','pray':'orange','waiting':'orange','near':'orange','offline':'green'};
@@ -1458,8 +1574,8 @@ const initDash=()=>{
     const navr=$('navr');if(navr&&!$('monitorBtn'))navr.insertBefore(monBtn,navr.firstChild);
     if(mobNav&&mobTabs){
       mobNav.style.display='block';
-      mobTabs.innerHTML=cfg.map((t,i)=>`<button class="mob-tab${i===0?' sup-on':''}" id="mnt-${t.id}" onclick="nTab('${t.id}')">${t.badge?`<span class="mob-tab-badge" id="mob-notif-badge" style="display:none">0</span>`:''}${t.badge2?`<span class="mob-tab-badge" id="mob-approval-badge" style="display:none;background:var(--green)">0</span>`:''}<i class="${t.icon}"></i>${t.label}</button>`).join('');
-      mobTabs.innerHTML+=`<button class="mob-tab" onclick="openMonitor()"><i class="fas fa-tv"></i>مراقبة</button>`;
+      mobTabs.innerHTML=cfg.map((t,i)=>`<button class="mob-tab${i===0?' sup-on':''}" id="mnt-${t.id}" onclick="nTab('${t.id}')">${t.badge?`<span class="mob-tab-badge" id="mob-notif-badge" style="display:none">0</span>`:''}${t.badge2?`<span class="mob-tab-badge" id="mob-approval-badge" style="display:none;background:var(--green)">0</span>`:''}<i class="${t.icon}"></i><span class="mob-label">${t.label}</span></button>`).join('');
+mobTabs.innerHTML+=`<button class="mob-tab" onclick="openMonitor()"><i class="fas fa-tv"></i><span class="mob-label">مراقبة</span></button>`;
     }
     renderSupReqs();
   }
@@ -1612,14 +1728,25 @@ const mkDriverReqCard=(id,req)=>{
   const confirmBtn=req.status==='modified'&&!req.driverConfirmed?`<div class="mod-notice"><i class="fas fa-bell"></i>يرجى تأكيد استلام التعديل</div><button class="rca rca-green" onclick="confirmMod('${id}')"><i class="fas fa-check"></i> تأكيد</button>`:'';
   const cancelMsg=req.status==='cancelled'?`<div class="cancel-msg"><i class="fas fa-ban"></i>تم إلغاء الطلب</div>`:'';
   const msgShow=req.message?`<div class="req-msg-box" style="margin-bottom:9px"><div class="req-msg-from"><i class="fas fa-user-tie" style="margin-left:4px"></i>رسالة المشرف</div><div class="req-msg-text">${esc(req.message)}</div></div>`:'';
-  const showActs=(req.status==='accepted'||req.status==='waiting'||req.status==='near')&&!req.doneDelivery;
-  const acts=showActs?`<button class="rca rca-orange" onclick="setDrvWaiting('${id}')"><i class="fas fa-hourglass-half"></i> انتظار</button><button class="rca rca-amber" onclick="setDrvNear('${id}')"><i class="fas fa-map-pin"></i> قريب</button><button class="rca rca-green" onclick="doneDelivery('${id}')"><i class="fas fa-flag-checkered"></i> تم التوصيل</button>`:'';
-  return`<div class="reqcard ${cls} ${noResp}" id="dreq-${id}">
+const showPendingActs = req.status === 'pending' || req.status === 'modified';
+  const showActiveActs = (req.status === 'accepted' || req.status === 'waiting' || req.status === 'near') && !req.doneDelivery;
+  
+  const pendingActs = showPendingActs ? `
+    <div style="display:flex;gap:7px;flex-wrap:wrap;padding:10px;background:var(--amber-l);border:1px solid var(--amber-m);border-radius:var(--r);margin-top:6px;animation:reqPulse 2s infinite">
+      <div style="width:100%;font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px;display:flex;align-items:center;gap:5px">
+        <i class="fas fa-clock"></i> يرجى الرد — الوقت ينفد
+        <span id="inline-timer-${id}" style="font-weight:900;color:var(--red);margin-right:auto"></span>
+      </div>
+      <button class="rca rca-green" style="flex:1;padding:10px;font-size:13px;font-weight:800" onclick="inlineAccept('${id}')"><i class="fas fa-check"></i> قبول</button>
+      <button class="rca rca-red" style="flex:1;padding:10px;font-size:13px;font-weight:800" onclick="inlineReject('${id}')"><i class="fas fa-times"></i> رفض</button>
+    </div>` : '';
+  
+  const acts = showActiveActs ? `<button class="rca rca-orange" onclick="setDrvWaiting('${id}')"><i class="fas fa-hourglass-half"></i> انتظار</button><button class="rca rca-amber" onclick="setDrvNear('${id}')"><i class="fas fa-map-pin"></i> قريب</button><button class="rca rca-green" onclick="doneDelivery('${id}')"><i class="fas fa-flag-checkered"></i> تم التوصيل</button>` : '';  return`<div class="reqcard ${cls} ${noResp}" id="dreq-${id}">
     <div class="reqtop"><div class="reqphone"><i class="fas fa-phone"></i>${esc(req.phone||'-')}</div>
     <div class="reqtimes"><span class="sbadge ${sBadgeCls}" style="font-size:10px">${sLbl}</span><span class="reqtime"><i class="fas fa-clock"></i>${fmt(req.ts||Date.now())}</span>${req.acceptedAt?`<span class="reqtime" style="color:var(--green)"><i class="fas fa-check"></i>${fmt(req.acceptedAt)}</span>`:''}</div></div>
     <div class="reqdetails"><i class="fas fa-map-marker-alt"></i><span>${esc(req.details||'-')}</span></div>
     ${msgShow}${modDiff}${cancelMsg}${confirmBtn}
-    <div class="reqacts">${acts}</div></div>`;
+    <div class="reqacts">${acts}</div>${pendingActs}</div>`;
 };
 
 window.setDrvWaiting=async id=>{
@@ -1640,7 +1767,11 @@ window.confirmMod=async id=>{
 window.doneDelivery=async id=>{
   if(!CU)return;
   const chk=await get(tRef(`driverRequests/${CU.id}/${id}`)).catch(()=>null);
-  if(!chk||!chk.exists()||chk.val().status==='cancelled')return toast('warn','الطلب ملغي','');
+  if(!chk||!chk.exists())return toast('warn','الطلب غير موجود','');
+  const chkStatus = chk.val().status;
+  if(chkStatus==='cancelled')return toast('warn','الطلب ملغي','');
+  // السماح بإتمام التوصيل حتى لو كان modified أو accepted أو waiting أو near
+  if(chkStatus!=='accepted'&&chkStatus!=='waiting'&&chkStatus!=='near'&&chkStatus!=='modified')return toast('warn','لا يمكن إتمام هذا الطلب','');
   const count=(CU.totalDeliveries||0)+1;
   await update(tRef(`drivers/${CU.id}`),{taxiColor:'green',status:'online',totalDeliveries:count});
   CU.totalDeliveries=count;CU.taxiColor='green';CU.status='online';
@@ -1658,7 +1789,7 @@ window.quickDoneDelivery=async()=>{
   if(!CU)return;
   const snap=await get(tRef(`driverRequests/${CU.id}`)).catch(()=>null);
   if(!snap||!snap.exists())return toast('warn','لا يوجد طلب نشط','');
-  const active=Object.entries(snap.val()).find(([,r])=>(r.status==='accepted'||r.status==='waiting'||r.status==='near')&&!r.doneDelivery);
+  const active=Object.entries(snap.val()).find(([,r])=>(r.status==='accepted'||r.status==='waiting'||r.status==='near'||r.status==='modified')&&!r.doneDelivery);
   if(!active)return toast('warn','لا يوجد طلب نشط','');
   const[id,req]=active;
   if(!confirm(`تأكيد إتمام التوصيل؟\n📞 ${req.phone||''}\n📍 ${(req.details||'').substring(0,50)}`))return;
@@ -1807,40 +1938,36 @@ const loadSupNotifList=()=>{
   addL(r);
 };
 
+let _addReqBusy = false;
 window.addReqItem = async () => {
+  if (_addReqBusy) return;
   const phone = ($('req-phone').value || '').trim();
   const details = ($('req-details').value || '').trim();
   if (!phone || !details) return shAl('al-req', 'err', 'يرجى ملء جميع الحقول');
   if (!/^[0-9+]{7,15}$/.test(phone.replace(/\s/g, ''))) return shAl('al-req', 'err', 'رقم الهاتف غير صحيح');
   
-  // ✅ منع الضغط المتكرر
-  const btn = event.target;
-  const origText = btn.innerHTML;
-  btn.innerHTML = '<span class="spin"></span> جار...';
-  btn.disabled = true;
+  _addReqBusy = true;
+  const btn = $('MaddReq').querySelector('.bp');
+  const origText = btn ? btn.innerHTML : '';
+  if (btn) { btn.innerHTML = '<span class="spin"></span> جار...'; btn.disabled = true; }
   
   try {
-    await push(tRef('recvRequests'), { 
-      phone, 
-      details, 
-      ts: Date.now(), 
-      addedBy: CU?.name || 'المشرف' 
+    await push(tRef('recvRequests'), {
+      phone,
+      details,
+      ts: Date.now(),
+      addedBy: CU?.name || 'المشرف'
     });
     $('req-phone').value = '';
     $('req-details').value = '';
-    shAl('al-req', 'ok', '✅ تم إضافة الطلب');
-    toast('ok', 'تم إضافة الطلب', '');
+    toast('ok', '✅ تم إضافة الطلب', '');
     playSound('notif');
-    
-    // ✅ إغلاق المودال بعد تأخير قصير
-    setTimeout(() => {
-      CM('MaddReq');
-    }, 500);
+    CM('MaddReq');
   } catch (err) {
     shAl('al-req', 'err', 'خطأ: ' + (err.message || ''));
   } finally {
-    btn.innerHTML = origText;
-    btn.disabled = false;
+    if (btn) { btn.innerHTML = origText; btn.disabled = false; }
+    setTimeout(() => { _addReqBusy = false; }, 1000);
   }
 };
 window.delRecvItem=async id=>{if(!confirm('حذف هذا الطلب؟'))return;await remove(tRef(`recvRequests/${id}`));toast('ok','تم الحذف','');};
@@ -1944,9 +2071,13 @@ window.selectTaxi=id=>{
   $('confirmSelBtn').disabled=false;$('confirmSelBtn').style.opacity='1';
 };
 window.closeTaxiSel=()=>{$('SelTaxiModal').classList.remove('on');selTaxiId=null;selReqData=null;};
+let _sendBusy = false;
 window.confirmTaxiSel=async()=>{
   if(!selTaxiId||!selReqData)return;
+  if(_sendBusy)return;
   const msg=prompt('رسالة للسائق (اختياري، إلغاء للتخطي):','');
+  if(msg===null)return; // المستخدم ضغط إلغاء
+  _sendBusy=true;
   const btn=$('confirmSelBtn');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;btn.style.opacity='.7';
   try{
     const payload={phone:selReqData.phone,details:selReqData.details,status:'pending',ts:Date.now(),sentBy:CU.name,sentAt:Date.now()};
@@ -1956,6 +2087,7 @@ window.confirmTaxiSel=async()=>{
     toast('ok','تم إرسال الطلب للسائق 🚕','');playSound('notif');closeTaxiSel();
   }catch(err){toast('err','خطأ',err.message||'');}
   btn.innerHTML='<i class="fas fa-paper-plane"></i> إرسال';btn.disabled=false;btn.style.opacity='1';
+  setTimeout(()=>{_sendBusy=false;},1500);
 };
 
 /* ═══════════════════════════════════════════════════════
@@ -2306,28 +2438,18 @@ const renderSupport=async role=>{
 window.reportBug = async () => {
   const msg = prompt('صف المشكلة التي واجهتها:', '');
   if (!msg || !msg.trim()) return;
-  
-  // الرقم الإسرائيلي مع رمز الدولة
-  const waNumber = '972595125423';  // 972 إسرائيل ثم الرقم بدون 0
-  const userInfo = CU?.name ? `المستخدم: ${CU.name}\n` : '';
-  const fullMsg = `${userInfo}التاريخ: ${new Date().toLocaleString('ar')}\n\nالمشكلة:\n${msg.trim()}`;
+  const waNumber = '972595125423';
+  const userInfo = CU?.name ? `👤 المستخدم: ${CU.name}\n📱 الهاتف: ${CU.phone||'-'}\n🏢 المكتب: ${TENANT_INFO?.name||'-'}\n` : '';
+  const roleLabel = CR === 'driver' ? '🚕 سائق' : CR === 'supervisor' ? '👨‍💼 مشرف' : '📥 مستقبل';
+  const fullMsg = `🐛 بلاغ مشكلة — منصة التاكسي\n\n${userInfo}📋 الدور: ${roleLabel}\n📅 التاريخ: ${new Date().toLocaleString('ar-PS')}\n\n❗ المشكلة:\n${msg.trim()}`;
   const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(fullMsg)}`;
-  
-  // فتح واتساب
   window.open(waLink, '_blank');
-  
-  // حفظ نسخة احتياطية في قاعدة البيانات
-  await push(tRef('errorLogs'), { 
-    msg: msg.trim(), 
-    userId: CU?.id || 'anon', 
-    userName: CU?.name || 'زائر',
-    ts: Date.now(),
-    reportedVia: 'whatsapp'
+  await push(tRef('errorLogs'), {
+    msg: msg.trim(), userId: CU?.id || 'anon', userName: CU?.name || 'زائر',
+    role: CR || 'unknown', officeId: TENANT_ID || '-', ts: Date.now()
   }).catch(() => {});
-  
   toast('ok', '✅ تم فتح واتساب', 'أرسل المشكلة وسيتم التواصل معك');
-};
-/* ═══ DRIVER PROFILE ═══ */
+};/* ═══ DRIVER PROFILE ═══ */
 const renderDProfile=()=>{
   $('dbody').innerHTML=`<div class="ptab">
     <div class="cbox" style="text-align:center">
@@ -2371,7 +2493,8 @@ window.delMyAcc=async()=>{
 const renderSProfile = () => {
   const info = TENANT_INFO || { name: '-' };
   // توليد كود دعوة واضح للمشرف
-  const inviteCodePlain = `DRV-${(TENANT_ID || 'XXXX').toUpperCase()}-2024`;
+  // استخراج كود الدعوة الحقيقي من TENANT_INFO
+  const inviteCodePlain = TENANT_INFO?._inviteCode || `DRV-${(TENANT_ID||'XXXX').toUpperCase()}-2024`;
   
   $('dbody').innerHTML = `<div class="ptab">
     <div class="cbox" style="text-align:center">
@@ -2513,7 +2636,7 @@ const initRecvDash=()=>{
   ntabs.innerHTML=recvTabsCfg.map((t,i)=>`<button class="ntab${i===0?' sup-on':''}" id="rnt-${t.id}" onclick="recvTab('${t.id}')"><i class="${t.icon}"></i> ${t.label}${t.badge?` <span class="ntab-badge" id="recv-req-badge" style="display:none">0</span>`:''}</button>`).join('');
   if(mobNav&&mobTabs){
     mobNav.style.display='block';
-    mobTabs.innerHTML=recvTabsCfg.map((t,i)=>`<button class="mob-tab${i===0?' sup-on':''}" id="rmnt-${t.id}" onclick="recvTab('${t.id}')">${t.badge?`<span class="mob-tab-badge" id="mob-recv-badge" style="display:none">0</span>`:''}<i class="${t.icon}"></i>${t.label}</button>`).join('');
+    mobTabs.innerHTML=recvTabsCfg.map((t,i)=>`<button class="mob-tab${i===0?' sup-on':''}" id="rmnt-${t.id}" onclick="recvTab('${t.id}')">${t.badge?`<span class="mob-tab-badge" id="mob-recv-badge" style="display:none">0</span>`:''}<i class="${t.icon}"></i><span class="mob-label">${t.label}</span></button>`).join('');
   }
   loadRecvDrivers();
   listenRecvNewRequests();
@@ -2806,4 +2929,4 @@ window.logoutRecv=()=>{
 
 </script>
 </body>
-</html>
+</html>  
